@@ -225,9 +225,8 @@ rm -rf ~/Projects/kikiriki
 ## Credits
 
 - [whisper.cpp](https://github.com/ggml-org/whisper.cpp) - Fast local speech recognition
-- [xbindkeys](https://www.nongnu.org/xbindkeys/) - Keyboard shortcut daemon
-- Original idea inspired by the `speech-to-text` script in this repository
 
 ## License
 
-This is free and unencumbered software released into the public domain.
+This project is licensed under the GNU Affero General Public License v3.0 (AGPLv3).
+See the [LICENSE](LICENSE) file for details.

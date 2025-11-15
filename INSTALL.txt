@@ -1,0 +1,102 @@
+INSTALLATION SUMMARY
+====================
+
+All files have been created in: ~/bin/push-to-talk/
+
+FILES CREATED:
+--------------
+✓ speech-to-text-ptt   - Main push-to-talk script (executable)
+✓ stt-setup            - Installation script (executable)
+✓ stt-start            - Start the service (executable)
+✓ stt-stop             - Stop the service (executable)
+✓ xbindkeysrc          - Keyboard shortcuts config (edit this!)
+✓ xbindkeysrc.example  - Example configurations
+✓ README.md            - Complete documentation
+✓ INSTALL.txt          - This file
+
+
+NEXT STEPS:
+-----------
+
+1. Run the setup script:
+   
+   cd ~/bin/push-to-talk
+   ./stt-setup
+
+   This will:
+   - Install required system packages (xbindkeys, xdotool, etc.)
+   - Configure ~/.xbindkeysrc with default hotkey (Ctrl+Alt+G)
+   - Set up auto-start on login
+   
+2. Start the service:
+
+   ~/bin/push-to-talk/stt-start
+
+3. Test it:
+   
+   - Press and HOLD Ctrl+Alt+G
+   - Speak something
+   - Release the keys
+   - Your text will appear!
+
+
+MANUAL TESTING (without xbindkeys):
+------------------------------------
+
+You can test the script manually:
+
+   ~/bin/push-to-talk/speech-to-text-ptt start
+   # speak something
+   ~/bin/push-to-talk/speech-to-text-ptt stop
+
+
+CUSTOMIZATION:
+--------------
+
+• Change keyboard shortcut:
+  Edit ~/bin/push-to-talk/xbindkeysrc (see xbindkeysrc.example for ideas)
+  Then restart: ~/bin/push-to-talk/stt-stop && ~/bin/push-to-talk/stt-start
+  
+• Change Whisper model, audio settings, etc:
+  Edit ~/bin/push-to-talk/speech-to-text-ptt
+  
+• Change behavior (auto-paste vs clipboard):
+  Edit AUTO_PASTE=true/false in speech-to-text-ptt
+
+
+FEATURES:
+---------
+
+✓ Simple push-to-talk (hold key to record, release to transcribe)
+✓ Customizable keyboard shortcuts via xbindkeys
+✓ Audio feedback (sounds on start/stop)
+✓ Visual feedback (desktop notifications)
+✓ Auto-paste into any application
+✓ Lightweight (no Python, just bash + standard tools)
+✓ Privacy-focused (all local processing)
+
+
+TROUBLESHOOTING:
+----------------
+
+See README.md for detailed troubleshooting information.
+
+Common issues:
+- Make sure whisper.cpp is built and models are downloaded
+- Check microphone permissions
+- Verify xbindkeys is running: pgrep xbindkeys
+- Check paths in speech-to-text-ptt match your setup
+
+
+DOCUMENTATION:
+--------------
+
+Read README.md for complete documentation including:
+- Configuration options
+- Alternative keyboard shortcuts
+- Different Whisper models
+- Advanced usage
+- Troubleshooting guide
+
+
+Enjoy your new push-to-talk speech-to-text system!

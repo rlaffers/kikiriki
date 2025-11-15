@@ -1,0 +1,37 @@
+#!/bin/bash
+#
+# Start Speech-to-Text Push-to-Talk
+# Uses the local xbindkeysrc configuration
+#
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_FILE="${SCRIPT_DIR}/xbindkeysrc"
+
+# Check if xbindkeys is already running with our config
+if pgrep -f "xbindkeys.*${CONFIG_FILE}" >/dev/null; then
+    echo "✅ Speech-to-Text Push-to-Talk is already running"
+    exit 0
+fi
+
+# Check if config file exists
+if [[ ! -f "$CONFIG_FILE" ]]; then
+    echo "❌ Error: Configuration file not found: $CONFIG_FILE"
+    exit 1
+fi
+
+# Start xbindkeys with our config
+echo "🚀 Starting Speech-to-Text Push-to-Talk..."
+echo "📁 Config: $CONFIG_FILE"
+echo "🎯 Hotkey: Ctrl+Alt+G (hold to record, release to transcribe)"
+echo
+
+xbindkeys -f "$CONFIG_FILE"
+
+if pgrep -f "xbindkeys.*${CONFIG_FILE}" >/dev/null; then
+    echo "✅ Started successfully!"
+    echo
+    echo "To stop: ~/bin/push-to-talk/stt-stop"
+else
+    echo "❌ Failed to start xbindkeys"
+    exit 1
+fi

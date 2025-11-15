@@ -1,0 +1,136 @@
+#!/bin/bash
+#
+# Speech-to-Text Push-to-Talk
+# Usage: speech-to-text-ptt {start|stop}
+#
+
+set -euo pipefail
+
+# Configuration (edit these values)
+WHISPER_MODEL="${HOME}/whisper.cpp/models/ggml-base.en.bin"
+WHISPER_BIN="${HOME}/whisper.cpp/build/bin/whisper-cli"
+WHISPER_THREADS=8
+WHISPER_LANG="en"
+
+# Audio settings
+SAMPLE_RATE=16000
+AUDIO_FORMAT="S16_LE"
+AUDIO_CHANNELS=1
+AUDIO_DEVICE="default"
+
+# Feedback
+ENABLE_NOTIFICATIONS=true
+ENABLE_SOUNDS=true
+SOUND_START="/usr/share/sounds/freedesktop/stereo/message.oga"
+SOUND_STOP="/usr/share/sounds/freedesktop/stereo/complete.oga"
+
+# Output
+AUTO_PASTE=true
+TEMP_DIR="/tmp"
+
+# Runtime files
+STATE_DIR="${HOME}/.local/state/speech-to-text"
+LOCK_FILE="${STATE_DIR}/recording.lock"
+TEMP_AUDIO="${TEMP_DIR}/stt-recording-$$.wav"
+
+# Create state directory
+mkdir -p "$STATE_DIR"
+
+# Functions
+play_sound() {
+    [[ "$ENABLE_SOUNDS" == "true" ]] && [[ -f "$1" ]] && paplay "$1" &>/dev/null &
+}
+
+notify() {
+    [[ "$ENABLE_NOTIFICATIONS" == "true" ]] && notify-send -t 2000 "$@" &>/dev/null || true
+}
+
+start_recording() {
+    # Prevent multiple recordings
+    if [[ -f "$LOCK_FILE" ]]; then
+        exit 0
+    fi
+    
+    # Create temp file with unique name
+    TEMP_AUDIO="${TEMP_DIR}/stt-recording-$RANDOM-$$.wav"
+    echo "$TEMP_AUDIO" > "$LOCK_FILE"
+    
+    # Start recording
+    arecord -f "$AUDIO_FORMAT" -r "$SAMPLE_RATE" -c "$AUDIO_CHANNELS" \
+            -D "$AUDIO_DEVICE" "$TEMP_AUDIO" &>/dev/null &
+    
+    # Append PID to lock file
+    echo "$!" >> "$LOCK_FILE"
+    
+    play_sound "$SOUND_START"
+    notify "🎤 Recording..." -u low
+}
+
+stop_recording() {
+    # Check if recording
+    if [[ ! -f "$LOCK_FILE" ]]; then
+        exit 0
+    fi
+    
+    # Read temp audio path and PID from lock file
+    TEMP_AUDIO=$(head -n 1 "$LOCK_FILE" 2>/dev/null || echo "")
+    RECORDING_PID=$(tail -n 1 "$LOCK_FILE" 2>/dev/null || echo "")
+    rm -f "$LOCK_FILE"
+    
+    # Stop recording
+    if [[ -n "$RECORDING_PID" ]] && kill -0 "$RECORDING_PID" 2>/dev/null; then
+        kill -INT "$RECORDING_PID" 2>/dev/null || true
+        wait "$RECORDING_PID" 2>/dev/null || true
+    fi
+    
+    play_sound "$SOUND_STOP"
+    notify "⚙️ Processing..." -u low
+    
+    # Check audio file size (needs at least 1KB)
+    if [[ ! -f "$TEMP_AUDIO" ]] || [[ $(stat -c%s "$TEMP_AUDIO" 2>/dev/null || echo 0) -lt 1000 ]]; then
+        notify "❌ Recording too short" -u critical
+        rm -f "$TEMP_AUDIO"
+        exit 0
+    fi
+    
+    # Transcribe
+    if output=$("$WHISPER_BIN" -m "$WHISPER_MODEL" -f "$TEMP_AUDIO" \
+                -t "$WHISPER_THREADS" -l "$WHISPER_LANG" \
+                --no-timestamps --output-txt --output-file - 2>/dev/null); then
+        
+        # Clean output - remove whisper metadata and empty lines
+        output=$(echo "$output" | grep -v "^whisper_" | grep -v "^system_info" | grep -v "^main:" | sed '/^$/d' | tr '\n' ' ' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+        
+        if [[ -n "$output" ]]; then
+            if [[ "$AUTO_PASTE" == "true" ]]; then
+                sleep 0.1
+                echo -n "$output" | xdotool type --clearmodifiers --file -
+                notify "✅ Inserted text" -u normal
+            else
+                echo -n "$output" | xclip -selection clipboard 2>/dev/null
+                notify "📋 Copied to clipboard" -u normal
+            fi
+        else
+            notify "❌ No speech detected" -u critical
+        fi
+    else
+        notify "❌ Transcription failed" -u critical
+    fi
+    
+    # Cleanup
+    rm -f "$TEMP_AUDIO"
+}
+
+# Main
+case "${1:-}" in
+    start)
+        start_recording
+        ;;
+    stop)
+        stop_recording
+        ;;
+    *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+        ;;
+esac

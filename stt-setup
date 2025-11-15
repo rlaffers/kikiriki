@@ -1,0 +1,124 @@
+#!/bin/bash
+#
+# Speech-to-Text Push-to-Talk Setup
+# Installs dependencies and configures the system
+#
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+echo "=========================================="
+echo "  Speech-to-Text Push-to-Talk Setup"
+echo "=========================================="
+echo
+
+# Check if running on Ubuntu/Debian
+if ! command -v apt &> /dev/null; then
+    echo "⚠️  Warning: This script is designed for Ubuntu/Debian systems"
+    read -p "Continue anyway? (y/N) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        exit 1
+    fi
+fi
+
+# Check for whisper.cpp installation
+echo "Checking for whisper.cpp..."
+if [[ ! -f "${HOME}/whisper.cpp/build/bin/whisper-cli" ]]; then
+    echo "⚠️  Warning: whisper-cli not found at ${HOME}/whisper.cpp/build/bin/whisper-cli"
+    echo "   Make sure whisper.cpp is built and available"
+    echo "   The script will continue, but you'll need to edit the paths in speech-to-text-ptt"
+fi
+
+if [[ ! -f "${HOME}/whisper.cpp/models/ggml-base.en.bin" ]]; then
+    echo "⚠️  Warning: Whisper model not found at ${HOME}/whisper.cpp/models/ggml-base.en.bin"
+    echo "   You may need to download a model first"
+fi
+
+echo
+echo "Installing system dependencies..."
+
+# Check which packages need to be installed
+PACKAGES_TO_INSTALL=()
+for pkg in xbindkeys alsa-utils pulseaudio-utils x11-xserver-utils xdotool xclip libnotify-bin; do
+    if ! dpkg -l | grep -q "^ii  $pkg "; then
+        PACKAGES_TO_INSTALL+=("$pkg")
+    fi
+done
+
+if [[ ${#PACKAGES_TO_INSTALL[@]} -gt 0 ]]; then
+    echo "Will install: ${PACKAGES_TO_INSTALL[*]}"
+    sudo apt update
+    sudo apt install -y "${PACKAGES_TO_INSTALL[@]}"
+    echo "✅ Dependencies installed"
+else
+    echo "✅ All dependencies already installed"
+fi
+
+# Make scripts executable
+echo
+echo "Making scripts executable..."
+chmod +x "${SCRIPT_DIR}/speech-to-text-ptt"
+chmod +x "${SCRIPT_DIR}/stt-start"
+chmod +x "${SCRIPT_DIR}/stt-stop"
+echo "✅ Scripts are executable"
+
+# Setup xbindkeys configuration (local to this directory)
+echo
+echo "Setting up xbindkeys configuration..."
+
+XBINDKEYS_CONFIG="${SCRIPT_DIR}/xbindkeysrc"
+echo "✅ Using local configuration: $XBINDKEYS_CONFIG"
+
+# Setup auto-start
+echo
+echo "Setting up auto-start..."
+
+AUTOSTART_DIR="${HOME}/.config/autostart"
+AUTOSTART_FILE="${AUTOSTART_DIR}/speech-to-text-ptt.desktop"
+
+mkdir -p "$AUTOSTART_DIR"
+
+cat > "$AUTOSTART_FILE" << EOF
+[Desktop Entry]
+Type=Application
+Name=Speech-to-Text Push-to-Talk
+Exec=${SCRIPT_DIR}/stt-start
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Comment=Speech-to-Text Push-to-Talk using xbindkeys
+EOF
+echo "✅ Created autostart entry"
+
+echo
+echo "=========================================="
+echo "  ✅ Setup Complete!"
+echo "=========================================="
+echo
+echo "📁 Installation directory: $SCRIPT_DIR"
+echo "⚙️  Configuration file: $XBINDKEYS_CONFIG"
+echo
+echo "🎯 Default hotkey: Ctrl+Space"
+echo "   - Press and hold to record"
+echo "   - Release to transcribe"
+echo
+echo "To customize settings, edit:"
+echo "  ${SCRIPT_DIR}/speech-to-text-ptt"
+echo
+echo "To change the hotkey, edit:"
+echo "  ${SCRIPT_DIR}/xbindkeysrc"
+echo "  Then run: ${SCRIPT_DIR}/stt-stop && ${SCRIPT_DIR}/stt-start"
+echo
+echo "To start now:"
+echo "  ${SCRIPT_DIR}/stt-start"
+echo
+echo "To stop:"
+echo "  ${SCRIPT_DIR}/stt-stop"
+echo
+echo "To test the script manually:"
+echo "  ${SCRIPT_DIR}/speech-to-text-ptt start"
+echo "  # speak something"
+echo "  ${SCRIPT_DIR}/speech-to-text-ptt stop"
+echo

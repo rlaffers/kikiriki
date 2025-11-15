@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+# Stop Speech-to-Text Push-to-Talk
+#
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_FILE="${SCRIPT_DIR}/xbindkeysrc"
+
+# Kill xbindkeys running with our config
+if pgrep -f "xbindkeys.*${CONFIG_FILE}" >/dev/null; then
+    pkill -f "xbindkeys.*${CONFIG_FILE}"
+    echo "✅ Speech-to-Text Push-to-Talk stopped"
+else
+    echo "ℹ️  Speech-to-Text Push-to-Talk is not running"
+fi
+
+# Clean up any stray recording processes
+STATE_DIR="${HOME}/.local/state/speech-to-text"
+LOCK_FILE="${STATE_DIR}/recording.lock"
+
+if [[ -f "$LOCK_FILE" ]]; then
+    RECORDING_PID=$(tail -n 1 "$LOCK_FILE" 2>/dev/null || echo "")
+    if [[ -n "$RECORDING_PID" ]] && kill -0 "$RECORDING_PID" 2>/dev/null; then
+        kill -INT "$RECORDING_PID" 2>/dev/null || true
+        echo "🧹 Cleaned up recording process"
+    fi
+    rm -f "$LOCK_FILE"
+fi

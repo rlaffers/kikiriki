@@ -9,7 +9,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "=========================================="
-echo "  Speech-to-Text Push-to-Talk Setup"
+echo "  Kikiriki Speech-to-Text Push-to-Talk Setup"
 echo "=========================================="
 echo
 
@@ -83,7 +83,7 @@ mkdir -p "$AUTOSTART_DIR"
 cat > "$AUTOSTART_FILE" << EOF
 [Desktop Entry]
 Type=Application
-Name=Speech-to-Text Push-to-Talk
+Name=Kikiriki Speech-to-Text Push-to-Talk
 Exec=${SCRIPT_DIR}/kikiriki-start
 Hidden=false
 NoDisplay=false

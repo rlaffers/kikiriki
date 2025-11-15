@@ -44,7 +44,7 @@ Or it will start automatically on next login.
 
 ### 3. Test It!
 
-1. **Press and hold** `Ctrl+Alt+G`
+1. **Press and hold** `Ctrl+Space`
 2. **Speak** what you want to transcribe
 3. **Release** the keys
 4. Your text will be inserted where your cursor is!

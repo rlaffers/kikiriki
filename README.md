@@ -31,16 +31,16 @@ cd ~/Projects/kikiriki
 This will:
 - Install required system dependencies (xbindkeys, xdotool, etc.)
 - Configure the local xbindkeys config file
-- Set up auto-start on login
+- Set up systemd user service for auto-start on login
 - Make all scripts executable
 
 ### 2. Start the service
 
 ```bash
-~/Projects/kikiriki/kikiriki-start
+systemctl --user start kikiriki.service
 ```
 
-Or it will start automatically on next login.
+Or it will start automatically on next login (if enabled during installation).
 
 ### 3. Test It!
 
@@ -77,11 +77,10 @@ Example configurations:
   Mod4 + v + Release
 ```
 
-After editing, reload with the start script:
+After editing, restart the service:
 
 ```bash
-~/Projects/kikiriki/kikiriki-stop
-~/Projects/kikiriki/kikiriki-start
+systemctl --user restart kikiriki.service
 ```
 
 ### Customizing Whisper Settings
@@ -115,9 +114,36 @@ AUTO_PASTE=true                                               # Auto-insert text
 
 ## Usage
 
+### Service Management
+
+Control the service using systemd:
+
+```bash
+# Start the service
+systemctl --user start kikiriki.service
+
+# Stop the service
+systemctl --user stop kikiriki.service
+
+# Restart the service (after config changes)
+systemctl --user restart kikiriki.service
+
+# Check service status
+systemctl --user status kikiriki.service
+
+# View logs
+journalctl --user -u kikiriki.service -f
+
+# Enable auto-start on login
+systemctl --user enable kikiriki.service
+
+# Disable auto-start
+systemctl --user disable kikiriki.service
+```
+
 ### Normal Operation
 
-1. Start the service: `~/Projects/kikiriki/kikiriki-start`
+1. Ensure the service is running: `systemctl --user status kikiriki.service`
 2. Press and hold your configured hotkey
 3. Speak clearly
 4. Release the hotkey
@@ -151,9 +177,10 @@ You can test the script manually without xbindkeys:
 - Run script manually to see error messages
 
 **Hotkey not working:**
-- Verify the service is running: `pgrep -f "xbindkeys.*kikiriki"`
+- Verify the service is running: `systemctl --user status kikiriki.service`
 - Check configuration: `cat ~/Projects/kikiriki/xbindkeysrc`
-- Restart the service: `~/Projects/kikiriki/kikiriki-stop && ~/Projects/kikiriki/kikiriki-start`
+- Restart the service: `systemctl --user restart kikiriki.service`
+- Check logs: `journalctl --user -u kikiriki.service -n 50`
 - Look for conflicts with desktop environment shortcuts
 
 **Text not pasting:**
@@ -166,16 +193,16 @@ You can test the script manually without xbindkeys:
 ```
 ~/Projects/kikiriki/
 ├── kikiriki              # Main script (handles recording & transcription)
+├── kikiriki.service      # systemd user service template
 ├── install               # Installation & setup script
-├── kikiriki-start             # Start the service
-├── kikiriki-stop              # Stop the service
+├── uninstall             # Uninstallation script
+├── kikiriki-start        # Start the service (used by systemd)
+├── kikiriki-stop         # Stop the service (used by systemd)
 ├── xbindkeysrc           # Keyboard shortcuts config (edit this!)
-├── xbindkeysrc.example   # Example configurations
-├── INSTALL.txt           # Quick start guide
 ├── README.md             # This file
 
-~/.local/state/kikiriki/         # Runtime state files
-~/.config/autostart/kikiriki.desktop  # Auto-start entry
+~/.config/systemd/user/kikiriki.service  # systemd user service
+~/.local/state/kikiriki/                 # Runtime state files
 ```
 
 ## Advanced Usage
@@ -211,16 +238,17 @@ Set `AUTO_PASTE=false` in the script to copy transcribed text to clipboard inste
 
 ## Uninstall
 
+Run the uninstall script:
+
 ```bash
-# Stop the service
-~/Projects/kikiriki/kikiriki-stop
-
-# Remove autostart
-rm ~/.config/autostart/kikiriki.desktop
-
-# Remove the scripts
-rm -rf ~/Projects/kikiriki
+~/Projects/kikiriki/uninstall
 ```
+
+This will:
+- Stop and disable the systemd service
+- Remove the service file
+- Clean up state directories
+- Optionally delete the installation directory
 
 ## Credits
 

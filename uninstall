@@ -1,0 +1,64 @@
+#!/bin/bash
+#
+# Kikiriki Uninstall Script
+# Removes systemd service and cleans up files
+#
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+echo "=========================================="
+echo "  Kikiriki Uninstall"
+echo "=========================================="
+echo
+
+# Stop and disable the systemd service
+echo "Stopping and disabling systemd service..."
+if systemctl --user is-active kikiriki.service &>/dev/null; then
+    systemctl --user stop kikiriki.service
+    echo "✅ Service stopped"
+fi
+
+if systemctl --user is-enabled kikiriki.service &>/dev/null; then
+    systemctl --user disable kikiriki.service
+    echo "✅ Service disabled"
+fi
+
+# Remove the service file
+SERVICE_FILE="${HOME}/.config/systemd/user/kikiriki.service"
+if [[ -f "$SERVICE_FILE" ]]; then
+    rm -f "$SERVICE_FILE"
+    systemctl --user daemon-reload
+    echo "✅ Service file removed"
+fi
+
+# Clean up state directory
+STATE_DIR="${HOME}/.local/state/kikiriki"
+if [[ -d "$STATE_DIR" ]]; then
+    rm -rf "$STATE_DIR"
+    echo "✅ Cleaned up state directory"
+fi
+
+echo
+echo "=========================================="
+echo "  ✅ Uninstall Complete!"
+echo "=========================================="
+echo
+echo "The following directory still exists:"
+echo "  $SCRIPT_DIR"
+echo
+echo "You can safely delete it if you want to completely remove Kikiriki."
+echo
+read -p "Delete installation directory? (y/N) " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    cd "$HOME"
+    rm -rf "$SCRIPT_DIR"
+    echo "✅ Installation directory deleted"
+    echo "Kikiriki has been completely removed."
+else
+    echo "Installation directory preserved."
+    echo "You can manually delete it later: rm -rf $SCRIPT_DIR"
+fi
+echo

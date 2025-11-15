@@ -22,7 +22,7 @@ fi
 # Start xbindkeys with our config
 echo "🚀 Starting Speech-to-Text Push-to-Talk..."
 echo "📁 Config: $CONFIG_FILE"
-echo "🎯 Hotkey: Ctrl+Alt+G (hold to record, release to transcribe)"
+echo "🎯 Hotkey: Ctrl+Space (hold to record, release to transcribe)"
 echo
 
 xbindkeys -f "$CONFIG_FILE"

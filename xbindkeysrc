@@ -47,7 +47,7 @@
 # Tips:
 # =====
 # 1. After editing this file, reload with:
-#    ~/Projects/kikiriki/stt-start
+#    ~/Projects/kikiriki/kikiriki-start
 #
 # 2. To find key names, run:
 #    xbindkeys --key

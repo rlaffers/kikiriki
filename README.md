@@ -25,7 +25,7 @@ Run the setup script:
 
 ```bash
 cd ~/Projects/kikiriki
-./stt-setup
+./install
 ```
 
 This will:
@@ -37,7 +37,7 @@ This will:
 ### 2. Start the service
 
 ```bash
-~/Projects/kikiriki/stt-start
+~/Projects/kikiriki/kikiriki-start
 ```
 
 Or it will start automatically on next login.
@@ -80,8 +80,8 @@ Example configurations:
 After editing, reload with the start script:
 
 ```bash
-~/Projects/kikiriki/stt-stop
-~/Projects/kikiriki/stt-start
+~/Projects/kikiriki/kikiriki-stop
+~/Projects/kikiriki/kikiriki-start
 ```
 
 ### Customizing Whisper Settings
@@ -117,7 +117,7 @@ AUTO_PASTE=true                                               # Auto-insert text
 
 ### Normal Operation
 
-1. Start the service: `~/Projects/kikiriki/stt-start`
+1. Start the service: `~/Projects/kikiriki/kikiriki-start`
 2. Press and hold your configured hotkey
 3. Speak clearly
 4. Release the hotkey
@@ -153,7 +153,7 @@ You can test the script manually without xbindkeys:
 **Hotkey not working:**
 - Verify the service is running: `pgrep -f "xbindkeys.*kikiriki"`
 - Check configuration: `cat ~/Projects/kikiriki/xbindkeysrc`
-- Restart the service: `~/Projects/kikiriki/stt-stop && ~/Projects/kikiriki/stt-start`
+- Restart the service: `~/Projects/kikiriki/kikiriki-stop && ~/Projects/kikiriki/kikiriki-start`
 - Look for conflicts with desktop environment shortcuts
 
 **Text not pasting:**
@@ -166,9 +166,9 @@ You can test the script manually without xbindkeys:
 ```
 ~/Projects/kikiriki/
 ├── kikiriki              # Main script (handles recording & transcription)
-├── stt-setup             # Installation & setup script
-├── stt-start             # Start the service
-├── stt-stop              # Stop the service
+├── install               # Installation & setup script
+├── kikiriki-start             # Start the service
+├── kikiriki-stop              # Stop the service
 ├── xbindkeysrc           # Keyboard shortcuts config (edit this!)
 ├── xbindkeysrc.example   # Example configurations
 ├── INSTALL.txt           # Quick start guide
@@ -213,7 +213,7 @@ Set `AUTO_PASTE=false` in the script to copy transcribed text to clipboard inste
 
 ```bash
 # Stop the service
-~/Projects/kikiriki/stt-stop
+~/Projects/kikiriki/kikiriki-stop
 
 # Remove autostart
 rm ~/.config/autostart/kikiriki.desktop

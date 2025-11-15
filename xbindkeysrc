@@ -1,12 +1,12 @@
-# Speech-to-Text Push-to-Talk Configuration
+# Kikiriki Push-to-Talk Configuration
 # This is the xbindkeys configuration file
 # 
 # Hold Ctrl+Alt+G to record, release to transcribe
 
-# "~/bin/push-to-talk/speech-to-text-ptt start"
+# "~/Projects/kikiriki/kikiriki start"
 #   Control+Alt + g
 
-# "~/bin/push-to-talk/speech-to-text-ptt stop"
+# "~/Projects/kikiriki/kikiriki stop"
 #   Control+Alt + g + Release
 
 
@@ -15,24 +15,24 @@
 # Uncomment one of these to use a different hotkey
 
 # Option 1: Use Ctrl+Space instead
-"~/bin/push-to-talk/speech-to-text-ptt start"
+"~/Projects/kikiriki/kikiriki start"
   Control + space
 
-"~/bin/push-to-talk/speech-to-text-ptt stop"
+"~/Projects/kikiriki/kikiriki stop"
   Control + space + Release
 
 # Option 2: Use Super (Windows key) + V
-# "~/bin/push-to-talk/speech-to-text-ptt start"
+# "~/Projects/kikiriki/kikiriki start"
 #   Mod4 + v
 #
-# "~/bin/push-to-talk/speech-to-text-ptt stop"
+# "~/Projects/kikiriki/kikiriki stop"
 #   Mod4 + v + Release
 
 # Option 3: Use Ctrl+Shift+Space
-# "~/bin/push-to-talk/speech-to-text-ptt start"
+# "~/Projects/kikiriki/kikiriki start"
 #   Control+Shift + space
 #
-# "~/bin/push-to-talk/speech-to-text-ptt stop"
+# "~/Projects/kikiriki/kikiriki stop"
 #   Control+Shift + space + Release
 
 
@@ -47,7 +47,7 @@
 # Tips:
 # =====
 # 1. After editing this file, reload with:
-#    ~/bin/push-to-talk/stt-start
+#    ~/Projects/kikiriki/stt-start
 #
 # 2. To find key names, run:
 #    xbindkeys --key

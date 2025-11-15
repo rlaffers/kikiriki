@@ -30,7 +30,7 @@ xbindkeys -f "$CONFIG_FILE"
 if pgrep -f "xbindkeys.*${CONFIG_FILE}" >/dev/null; then
     echo "✅ Started successfully!"
     echo
-    echo "To stop: ~/bin/push-to-talk/stt-stop"
+    echo "To stop: ~/Projects/kikiriki/stt-stop"
 else
     echo "❌ Failed to start xbindkeys"
     exit 1

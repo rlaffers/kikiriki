@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Speech-to-Text Push-to-Talk
-# Usage: speech-to-text-ptt {start|stop}
+# Usage: kikiriki {start|stop}
 #
 
 set -euo pipefail
@@ -29,7 +29,7 @@ AUTO_PASTE=true
 TEMP_DIR="/tmp"
 
 # Runtime files
-STATE_DIR="${HOME}/.local/state/speech-to-text"
+STATE_DIR="${HOME}/.local/state/kikiriki"
 LOCK_FILE="${STATE_DIR}/recording.lock"
 TEMP_AUDIO="${TEMP_DIR}/stt-recording-$$.wav"
 

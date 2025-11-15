@@ -24,7 +24,7 @@ A simple, efficient push-to-talk speech-to-text solution for Ubuntu Linux using 
 Run the setup script:
 
 ```bash
-cd ~/bin/push-to-talk
+cd ~/Projects/kikiriki
 ./stt-setup
 ```
 
@@ -37,7 +37,7 @@ This will:
 ### 2. Start the service
 
 ```bash
-~/bin/push-to-talk/stt-start
+~/Projects/kikiriki/stt-start
 ```
 
 Or it will start automatically on next login.
@@ -53,43 +53,43 @@ Or it will start automatically on next login.
 
 ### Changing the Keyboard Shortcut
 
-Edit `~/bin/push-to-talk/xbindkeysrc`:
+Edit `~/Projects/kikiriki/xbindkeysrc`:
 
 ```bash
-nano ~/bin/push-to-talk/xbindkeysrc
+nano ~/Projects/kikiriki/xbindkeysrc
 ```
 
 Example configurations:
 
 ```bash
 # Use Ctrl+Space
-"~/bin/push-to-talk/speech-to-text-ptt start"
+"~/Projects/kikiriki/kikiriki start"
   Control + space
 
-"~/bin/push-to-talk/speech-to-text-ptt stop"
+"~/Projects/kikiriki/kikiriki stop"
   Control + space + Release
 
 # Use Super (Windows) + V
-"~/bin/push-to-talk/speech-to-text-ptt start"
+"~/Projects/kikiriki/kikiriki start"
   Mod4 + v
 
-"~/bin/push-to-talk/speech-to-text-ptt stop"
+"~/Projects/kikiriki/kikiriki stop"
   Mod4 + v + Release
 ```
 
 After editing, reload with the start script:
 
 ```bash
-~/bin/push-to-talk/stt-stop
-~/bin/push-to-talk/stt-start
+~/Projects/kikiriki/stt-stop
+~/Projects/kikiriki/stt-start
 ```
 
 ### Customizing Whisper Settings
 
-Edit the configuration section in `speech-to-text-ptt`:
+Edit the configuration section in `kikiriki`:
 
 ```bash
-nano ~/bin/push-to-talk/speech-to-text-ptt
+nano ~/Projects/kikiriki/kikiriki
 ```
 
 Key settings you can change:
@@ -117,7 +117,7 @@ AUTO_PASTE=true                                               # Auto-insert text
 
 ### Normal Operation
 
-1. Start the service: `~/bin/push-to-talk/stt-start`
+1. Start the service: `~/Projects/kikiriki/stt-start`
 2. Press and hold your configured hotkey
 3. Speak clearly
 4. Release the hotkey
@@ -130,12 +130,12 @@ You can test the script manually without xbindkeys:
 
 ```bash
 # Start recording
-~/bin/push-to-talk/speech-to-text-ptt start
+~/Projects/kikiriki/kikiriki start
 
 # Speak something...
 
 # Stop and transcribe
-~/bin/push-to-talk/speech-to-text-ptt stop
+~/Projects/kikiriki/kikiriki stop
 ```
 
 ### Troubleshooting
@@ -151,9 +151,9 @@ You can test the script manually without xbindkeys:
 - Run script manually to see error messages
 
 **Hotkey not working:**
-- Verify the service is running: `pgrep -f "xbindkeys.*push-to-talk"`
-- Check configuration: `cat ~/bin/push-to-talk/xbindkeysrc`
-- Restart the service: `~/bin/push-to-talk/stt-stop && ~/bin/push-to-talk/stt-start`
+- Verify the service is running: `pgrep -f "xbindkeys.*kikiriki"`
+- Check configuration: `cat ~/Projects/kikiriki/xbindkeysrc`
+- Restart the service: `~/Projects/kikiriki/stt-stop && ~/Projects/kikiriki/stt-start`
 - Look for conflicts with desktop environment shortcuts
 
 **Text not pasting:**
@@ -164,18 +164,18 @@ You can test the script manually without xbindkeys:
 ## File Structure
 
 ```
-~/bin/push-to-talk/
-├── speech-to-text-ptt    # Main script (handles recording & transcription)
+~/Projects/kikiriki/
+├── kikiriki              # Main script (handles recording & transcription)
 ├── stt-setup             # Installation & setup script
 ├── stt-start             # Start the service
 ├── stt-stop              # Stop the service
 ├── xbindkeysrc           # Keyboard shortcuts config (edit this!)
 ├── xbindkeysrc.example   # Example configurations
 ├── INSTALL.txt           # Quick start guide
-└── README.md             # This file
+├── README.md             # This file
 
-~/.local/state/speech-to-text/  # Runtime state files
-~/.config/autostart/speech-to-text-ptt.desktop  # Auto-start entry
+~/.local/state/kikiriki/         # Runtime state files
+~/.config/autostart/kikiriki.desktop  # Auto-start entry
 ```
 
 ## Advanced Usage
@@ -193,7 +193,7 @@ cd ~/whisper.cpp
 ./models/download-ggml-model.sh large      # Best, slowest
 ```
 
-Then update `WHISPER_MODEL` path in `speech-to-text-ptt`.
+Then update `WHISPER_MODEL` path in `kikiriki`.
 
 ### Using Different Audio Devices
 
@@ -213,13 +213,13 @@ Set `AUTO_PASTE=false` in the script to copy transcribed text to clipboard inste
 
 ```bash
 # Stop the service
-~/bin/push-to-talk/stt-stop
+~/Projects/kikiriki/stt-stop
 
 # Remove autostart
-rm ~/.config/autostart/speech-to-text-ptt.desktop
+rm ~/.config/autostart/kikiriki.desktop
 
 # Remove the scripts
-rm -rf ~/bin/push-to-talk
+rm -rf ~/Projects/kikiriki
 ```
 
 ## Credits

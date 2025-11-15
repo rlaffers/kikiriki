@@ -28,7 +28,7 @@ echo "Checking for whisper.cpp..."
 if [[ ! -f "${HOME}/whisper.cpp/build/bin/whisper-cli" ]]; then
     echo "⚠️  Warning: whisper-cli not found at ${HOME}/whisper.cpp/build/bin/whisper-cli"
     echo "   Make sure whisper.cpp is built and available"
-    echo "   The script will continue, but you'll need to edit the paths in speech-to-text-ptt"
+    echo "   The script will continue, but you'll need to edit the paths in kikiriki"
 fi
 
 if [[ ! -f "${HOME}/whisper.cpp/models/ggml-base.en.bin" ]]; then
@@ -59,7 +59,7 @@ fi
 # Make scripts executable
 echo
 echo "Making scripts executable..."
-chmod +x "${SCRIPT_DIR}/speech-to-text-ptt"
+chmod +x "${SCRIPT_DIR}/kikiriki"
 chmod +x "${SCRIPT_DIR}/stt-start"
 chmod +x "${SCRIPT_DIR}/stt-stop"
 echo "✅ Scripts are executable"
@@ -76,7 +76,7 @@ echo
 echo "Setting up auto-start..."
 
 AUTOSTART_DIR="${HOME}/.config/autostart"
-AUTOSTART_FILE="${AUTOSTART_DIR}/speech-to-text-ptt.desktop"
+AUTOSTART_FILE="${AUTOSTART_DIR}/kikiriki.desktop"
 
 mkdir -p "$AUTOSTART_DIR"
 
@@ -105,7 +105,7 @@ echo "   - Press and hold to record"
 echo "   - Release to transcribe"
 echo
 echo "To customize settings, edit:"
-echo "  ${SCRIPT_DIR}/speech-to-text-ptt"
+echo "  ${SCRIPT_DIR}/kikiriki"
 echo
 echo "To change the hotkey, edit:"
 echo "  ${SCRIPT_DIR}/xbindkeysrc"
@@ -118,7 +118,7 @@ echo "To stop:"
 echo "  ${SCRIPT_DIR}/stt-stop"
 echo
 echo "To test the script manually:"
-echo "  ${SCRIPT_DIR}/speech-to-text-ptt start"
+echo "  ${SCRIPT_DIR}/kikiriki start"
 echo "  # speak something"
-echo "  ${SCRIPT_DIR}/speech-to-text-ptt stop"
+echo "  ${SCRIPT_DIR}/kikiriki stop"
 echo

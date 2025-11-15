@@ -88,7 +88,7 @@ if [[ ! -f "$SERVICE_TEMPLATE" ]]; then
 fi
 
 # Copy and customize the service file
-sed "s|%h/Projects/kikiriki|${SCRIPT_DIR}|g" "$SERVICE_TEMPLATE" > "$SERVICE_FILE"
+sed "s|KIKIRIKI_INSTALL_DIR|${SCRIPT_DIR}|g" "$SERVICE_TEMPLATE" > "$SERVICE_FILE"
 
 # Reload systemd user daemon
 systemctl --user daemon-reload

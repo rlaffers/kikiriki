@@ -2,17 +2,18 @@
 Description=Kikiriki Speech-to-Text Push-to-Talk
 Documentation=https://github.com/rlaffers/kikiriki
 After=graphical-session.target
+PartOf=graphical-session.target
 
 [Service]
 Type=simple
-ExecStart=%h/Projects/kikiriki/kikiriki-start
-ExecStop=%h/Projects/kikiriki/kikiriki-stop
+ExecStart=KIKIRIKI_INSTALL_DIR/kikiriki-start
+ExecStop=KIKIRIKI_INSTALL_DIR/kikiriki-stop
 Restart=on-failure
 RestartSec=5
+TimeoutStopSec=10
 
-# Ensure X11 session is available
-Environment=DISPLAY=:0
-# If using Wayland, you may need to set WAYLAND_DISPLAY
+# Kill all child processes when stopping
+KillMode=control-group
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical-session.target

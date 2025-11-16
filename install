@@ -62,13 +62,14 @@ echo "Making scripts executable..."
 chmod +x "${SCRIPT_DIR}/kikiriki"
 chmod +x "${SCRIPT_DIR}/kikiriki-start"
 chmod +x "${SCRIPT_DIR}/kikiriki-stop"
+chmod +x "${SCRIPT_DIR}/keyhold-handler"
 echo "✅ Scripts are executable"
 
 # Setup xbindkeys configuration (local to this directory)
 echo
 echo "Setting up xbindkeys configuration..."
 
-XBINDKEYS_CONFIG="${SCRIPT_DIR}/xbindkeysrc"
+XBINDKEYS_CONFIG="${SCRIPT_DIR}/xbindkeys.conf"
 echo "✅ Using local configuration: $XBINDKEYS_CONFIG"
 
 # Setup systemd user service
@@ -124,7 +125,7 @@ echo "To customize settings, edit:"
 echo "  ${SCRIPT_DIR}/kikiriki"
 echo
 echo "To change the hotkey, edit:"
-echo "  ${SCRIPT_DIR}/xbindkeysrc"
+echo "  ${SCRIPT_DIR}/xbindkeys.conf"
 echo "  Then run: systemctl --user restart kikiriki.service"
 echo
 echo "Service Management:"

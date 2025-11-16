@@ -4,14 +4,14 @@
 #
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CONFIG_FILE="${SCRIPT_DIR}/xbindkeysrc"
+CONFIG_FILE="${SCRIPT_DIR}/xbindkeys.conf"
 
 # Kill xbindkeys running with our config
 if pgrep -f "xbindkeys.*${CONFIG_FILE}" >/dev/null; then
     pkill -f "xbindkeys.*${CONFIG_FILE}"
-    echo "✅ Speech-to-Text Push-to-Talk stopped"
+    echo "✅ Kikiriki Speech-to-Text Push-to-Talk stopped"
 else
-    echo "ℹ️  Speech-to-Text Push-to-Talk is not running"
+    echo "ℹ️  Kikiriki Speech-to-Text Push-to-Talk is not running"
 fi
 
 # Clean up any stray recording processes

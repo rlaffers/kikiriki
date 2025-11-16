@@ -1,0 +1,45 @@
+#!/bin/bash
+# Key hold handler for xbindkeys debouncing
+# Problem: xbindkeys generates repeated press/release events when keys are held down
+# Solution: Distinguish between quick taps (run program1) and held keys (run program2)
+#   - First press: runs program1 once, creates lock file
+#   - Release: waits 150ms to detect if key was held, then runs program2
+#   - Repeated events during hold are ignored via lock file coordination
+
+LOCK_FILE="/tmp/kikiriki_key_release.lock"
+
+if [ "$1" = "press" ]; then
+    # Check if LOCK_FILE exists (meaning program already ran)
+    if [ ! -f "$LOCK_FILE" ]; then
+        # Create LOCK_FILE to indicate program has been executed
+        touch "$LOCK_FILE"
+        # Execute the command passed as arguments (everything after "press")
+        "${@:2}"
+    fi
+    
+elif [ "$1" = "release" ]; then
+    # Try to acquire the lock (non-blocking)
+    exec 200>"$LOCK_FILE"
+    if ! flock -n 200; then
+        # Another handler is sleeping, signal it by touching the file
+        touch "$LOCK_FILE"
+        exit 0
+    fi
+    
+    # We have the lock - we're the sleeping handler
+    while true; do
+        TIMESTAMP_BEFORE=$(stat -c %Y "$LOCK_FILE" 2>/dev/null)
+        sleep 0.15
+        TIMESTAMP_AFTER=$(stat -c %Y "$LOCK_FILE" 2>/dev/null)
+        
+        # Check if file was touched during sleep
+        if [ "$TIMESTAMP_BEFORE" = "$TIMESTAMP_AFTER" ]; then
+            # No interruption - this is the final release
+            rm -f "$LOCK_FILE"
+            # Execute the command passed as arguments (everything after "release")
+            "${@:2}"
+            break
+        fi
+        # Timestamp changed - another release came, restart timer
+    done
+fi

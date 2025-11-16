@@ -5,7 +5,7 @@ A simple, efficient push-to-talk speech-to-text solution for Ubuntu Linux using 
 ## Features
 
 ✅ **Simple Push-to-Talk** - Press and hold a keyboard shortcut to record, release to transcribe  
-✅ **Customizable Hotkeys** - Easy configuration via `.xbindkeysrc`  
+✅ **Customizable Hotkeys** - Easy configuration via `xbindkeys.conf`  
 ✅ **Audio & Visual Feedback** - Sound effects and desktop notifications  
 ✅ **Auto-Paste** - Transcribed text automatically inserted into any application  
 ✅ **Lightweight** - No Python dependencies, just standard Linux tools  
@@ -53,10 +53,10 @@ Or it will start automatically on next login (if enabled during installation).
 
 ### Changing the Keyboard Shortcut
 
-Edit `~/Projects/kikiriki/xbindkeysrc`:
+Edit `~/Projects/kikiriki/xbindkeys.conf`:
 
 ```bash
-nano ~/Projects/kikiriki/xbindkeysrc
+nano ~/Projects/kikiriki/xbindkeys.conf
 ```
 
 Example configurations:
@@ -178,7 +178,7 @@ You can test the script manually without xbindkeys:
 
 **Hotkey not working:**
 - Verify the service is running: `systemctl --user status kikiriki.service`
-- Check configuration: `cat ~/Projects/kikiriki/xbindkeysrc`
+- Check configuration: `cat ~/Projects/kikiriki/xbindkeys.conf`
 - Restart the service: `systemctl --user restart kikiriki.service`
 - Check logs: `journalctl --user -u kikiriki.service -n 50`
 - Look for conflicts with desktop environment shortcuts
@@ -198,7 +198,8 @@ You can test the script manually without xbindkeys:
 ├── uninstall             # Uninstallation script
 ├── kikiriki-start        # Start the service (used by systemd)
 ├── kikiriki-stop         # Stop the service (used by systemd)
-├── xbindkeysrc           # Keyboard shortcuts config (edit this!)
+├── xbindkeys.conf        # Keyboard shortcuts config (edit this!)
+├── keyhold-handler       # Debouncing script for xbindkeys
 ├── README.md             # This file
 
 ~/.config/systemd/user/kikiriki.service  # systemd user service

@@ -60,8 +60,8 @@ fi
 echo
 echo "Making scripts executable..."
 chmod +x "${SCRIPT_DIR}/kikiriki"
-chmod +x "${SCRIPT_DIR}/kikiriki-start"
-chmod +x "${SCRIPT_DIR}/kikiriki-stop"
+chmod +x "${SCRIPT_DIR}/kikiriki-bind-keys"
+chmod +x "${SCRIPT_DIR}/kikiriki-unbind-keys"
 chmod +x "${SCRIPT_DIR}/keyhold-handler"
 echo "✅ Scripts are executable"
 

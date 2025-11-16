@@ -196,8 +196,8 @@ You can test the script manually without xbindkeys:
 ├── kikiriki.service      # systemd user service template
 ├── install               # Installation & setup script
 ├── uninstall             # Uninstallation script
-├── kikiriki-start        # Start the service (used by systemd)
-├── kikiriki-stop         # Stop the service (used by systemd)
+├── kikiriki-bind-keys    # Start the service (used by systemd)
+├── kikiriki-unbind-keys  # Stop the service (used by systemd)
 ├── xbindkeys.conf        # Keyboard shortcuts config (edit this!)
 ├── keyhold-handler       # Debouncing script for xbindkeys
 ├── README.md             # This file

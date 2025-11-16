@@ -6,8 +6,8 @@ PartOf=graphical-session.target
 
 [Service]
 Type=simple
-ExecStart=KIKIRIKI_INSTALL_DIR/kikiriki-start
-ExecStop=KIKIRIKI_INSTALL_DIR/kikiriki-stop
+ExecStart=KIKIRIKI_INSTALL_DIR/kikiriki-bind-keys
+ExecStop=KIKIRIKI_INSTALL_DIR/kikiriki-unbind-keys
 Restart=on-failure
 RestartSec=5
 TimeoutStopSec=10

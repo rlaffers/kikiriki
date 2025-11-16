@@ -30,7 +30,7 @@ xbindkeys -f "$CONFIG_FILE"
 if pgrep -f "xbindkeys.*${CONFIG_FILE}" >/dev/null; then
     echo "✅ Started successfully!"
     echo
-    echo "To stop: ~/Projects/kikiriki/kikiriki-stop"
+    echo "To stop: ${SCRIPT_DIR}/kikiriki-unbind-keys"
 else
     echo "❌ Failed to start xbindkeys"
     exit 1

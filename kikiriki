@@ -6,6 +6,9 @@
 
 set -euo pipefail
 
+# Verbose mode (controlled by -v flag)
+VERBOSE_MODE=false
+
 # Configuration (edit these values)
 WHISPER_MODEL="${HOME}/whisper.cpp/models/ggml-base.en.bin"
 WHISPER_BIN="${HOME}/whisper.cpp/build/bin/whisper-cli"
@@ -42,7 +45,12 @@ play_sound() {
 }
 
 notify() {
-    [[ "$ENABLE_NOTIFICATIONS" == "true" ]] && notify-send -t 2000 "$@" &>/dev/null || true
+    local critical="${2:-false}"
+    if [[ "$ENABLE_NOTIFICATIONS" == "true" ]]; then
+        if [[ "$VERBOSE_MODE" == "true" ]] || [[ "$critical" == "true" ]]; then
+            notify-send -t 2000 "$1" ${3:+$3} &>/dev/null || true
+        fi
+    fi
 }
 
 start_recording() {
@@ -63,7 +71,7 @@ start_recording() {
     echo "$!" >> "$LOCK_FILE"
     
     play_sound "$SOUND_START"
-    notify "🎤 Recording..." -u low
+    notify "🎤 Recording..." false "-u low"
 }
 
 stop_recording() {
@@ -84,11 +92,11 @@ stop_recording() {
     fi
     
     play_sound "$SOUND_STOP"
-    notify "⚙️ Processing..." -u low
+    notify "⚙️ Processing..." false "-u low"
     
     # Check audio file size (needs at least 1KB)
     if [[ ! -f "$TEMP_AUDIO" ]] || [[ $(stat -c%s "$TEMP_AUDIO" 2>/dev/null || echo 0) -lt 1000 ]]; then
-        notify "❌ Recording too short" -u critical
+        notify "❌ Recording too short" true "-u critical"
         rm -f "$TEMP_AUDIO"
         exit 0
     fi
@@ -105,16 +113,16 @@ stop_recording() {
             if [[ "$AUTO_PASTE" == "true" ]]; then
                 sleep 0.1
                 echo -n "$output" | xdotool type --clearmodifiers --file -
-                notify "✅ Inserted text" -u normal
+                notify "✅ Inserted text" false "-u normal"
             else
                 echo -n "$output" | xclip -selection clipboard 2>/dev/null
-                notify "📋 Copied to clipboard" -u normal
+                notify "📋 Copied to clipboard" false "-u normal"
             fi
         else
-            notify "❌ No speech detected" -u critical
+            notify "❌ No speech detected" true "-u critical"
         fi
     else
-        notify "❌ Transcription failed" -u critical
+        notify "❌ Transcription failed" true "-u critical"
     fi
     
     # Cleanup
@@ -122,7 +130,34 @@ stop_recording() {
 }
 
 # Main
-case "${1:-}" in
+# Parse options
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -h|--help)
+            echo -e "Usage: $0 [-v] {start|stop}\n"
+            echo "  -v    Verbose mode (show all notifications)"
+            echo "  -h    Show this help message"
+            exit 0
+            ;;
+        -v)
+            VERBOSE_MODE=true
+            shift
+            ;;
+        start|stop)
+            ACTION="$1"
+            shift
+            ;;
+        *)
+            echo -e "Usage: $0 [-v] {start|stop}\n"
+            echo "  -v    Verbose mode (show all notifications)"
+            echo "  -h    Show this help message"
+            exit 1
+            ;;
+    esac
+done
+
+# Execute action
+case "${ACTION:-}" in
     start)
         start_recording
         ;;
@@ -130,7 +165,9 @@ case "${1:-}" in
         stop_recording
         ;;
     *)
-        echo "Usage: $0 {start|stop}"
+        echo "Usage: $0 [-v] {start|stop}"
+        echo "  -v    Verbose mode (show all notifications)"
+        echo "  -h    Show this help message"
         exit 1
         ;;
 esac

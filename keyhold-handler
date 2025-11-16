@@ -29,7 +29,7 @@ elif [ "$1" = "release" ]; then
     # We have the lock - we're the sleeping handler
     while true; do
         TIMESTAMP_BEFORE=$(stat -c %Y "$LOCK_FILE" 2>/dev/null)
-        sleep 0.15
+        sleep 1
         TIMESTAMP_AFTER=$(stat -c %Y "$LOCK_FILE" 2>/dev/null)
         
         # Check if file was touched during sleep

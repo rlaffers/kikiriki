@@ -57,15 +57,61 @@ echo
 # Check for whisper.cpp installation
 echo "Checking for whisper.cpp..."
 WHISPER_CPP_DIR="${HOME}/.local/share/whisper.cpp"
-if [[ ! -f "${WHISPER_CPP_DIR}/build/bin/whisper-cli" ]]; then
-    echo "⚠️  Warning: whisper-cli not found at ${WHISPER_CPP_DIR}/build/bin/whisper-cli"
-    echo "   Make sure whisper.cpp is built and available"
-    echo "   The script will continue, but you'll need to edit the paths in the config file"
-fi
+WHISPER_BIN_PATH="${WHISPER_CPP_DIR}/build/bin/whisper-cli"
+WHISPER_MODEL_PATH="${WHISPER_CPP_DIR}/models/ggml-base.en.bin"
+CUSTOM_WHISPER_DIR=""
 
-if [[ ! -f "${WHISPER_CPP_DIR}/models/ggml-base.en.bin" ]]; then
-    echo "⚠️  Warning: Whisper model not found at ${WHISPER_CPP_DIR}/models/ggml-base.en.bin"
-    echo "   You may need to download a model first"
+if [[ -f "$WHISPER_BIN_PATH" ]]; then
+    echo "✅ Found whisper-cli at default location: $WHISPER_BIN_PATH"
+    
+    if [[ -f "$WHISPER_MODEL_PATH" ]]; then
+        echo "✅ Found Whisper model at: $WHISPER_MODEL_PATH"
+    else
+        echo "⚠️  Warning: Whisper model not found at ${WHISPER_MODEL_PATH}"
+        echo "   You may need to download a model using:"
+        echo "   ${WHISPER_CPP_DIR}/models/download-ggml-model.sh base.en"
+    fi
+else
+    echo "⚠️  whisper-cli not found at default location: $WHISPER_BIN_PATH"
+    echo
+    
+    while true; do
+        read -p "Enter the path to your whisper.cpp installation directory (or press Enter to skip): " -r CUSTOM_WHISPER_DIR
+        
+        # User chose to skip
+        if [[ -z "$CUSTOM_WHISPER_DIR" ]]; then
+            echo "⚠️  Skipping whisper.cpp configuration"
+            echo "   You'll need to edit the paths in: ${CONFIG_DIR}/kikiriki.conf"
+            break
+        fi
+        
+        # Expand ~ to home directory
+        CUSTOM_WHISPER_DIR="${CUSTOM_WHISPER_DIR/#\~/$HOME}"
+        
+        # Check if the binary exists at the custom location
+        CUSTOM_BIN="${CUSTOM_WHISPER_DIR}/build/bin/whisper-cli"
+        if [[ -f "$CUSTOM_BIN" ]]; then
+            echo "✅ Found whisper-cli at: $CUSTOM_BIN"
+            WHISPER_BIN_PATH="$CUSTOM_BIN"
+            
+            # Check for model at custom location
+            CUSTOM_MODEL="${CUSTOM_WHISPER_DIR}/models/ggml-base.en.bin"
+            if [[ -f "$CUSTOM_MODEL" ]]; then
+                echo "✅ Found Whisper model at: $CUSTOM_MODEL"
+                WHISPER_MODEL_PATH="$CUSTOM_MODEL"
+            else
+                echo "⚠️  Warning: Whisper model not found at ${CUSTOM_MODEL}"
+                echo "   You may need to download a model using:"
+                echo "   ${CUSTOM_WHISPER_DIR}/models/download-ggml-model.sh base.en"
+                WHISPER_MODEL_PATH="$CUSTOM_MODEL"
+            fi
+            break
+        else
+            echo "❌ Error: whisper-cli not found at: $CUSTOM_BIN"
+            echo "   Please check the path and try again"
+            echo
+        fi
+    done
 fi
 
 echo
@@ -126,7 +172,15 @@ if [[ -f "${CONFIG_DIR}/kikiriki.conf" ]]; then
     echo "   Keeping existing configuration (not overwriting)"
 else
     cp "${SCRIPT_DIR}/kikiriki.conf" "${CONFIG_DIR}/"
-    echo "✅ Created default configuration: ${CONFIG_DIR}/kikiriki.conf"
+    
+    # If custom whisper paths were detected or provided, update the config
+    if [[ -n "$CUSTOM_WHISPER_DIR" ]]; then
+        sed -i "s|WHISPER_MODEL=.*|WHISPER_MODEL=\"${WHISPER_MODEL_PATH}\"|" "${CONFIG_DIR}/kikiriki.conf"
+        sed -i "s|WHISPER_BIN=.*|WHISPER_BIN=\"${WHISPER_BIN_PATH}\"|" "${CONFIG_DIR}/kikiriki.conf"
+        echo "✅ Created configuration with custom whisper.cpp paths: ${CONFIG_DIR}/kikiriki.conf"
+    else
+        echo "✅ Created default configuration: ${CONFIG_DIR}/kikiriki.conf"
+    fi
 fi
 
 # Setup xbindkeys configuration

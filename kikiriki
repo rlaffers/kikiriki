@@ -102,9 +102,22 @@ stop_recording() {
     fi
     
     # Transcribe
+    start_time=$(date +%s%N)
     if output=$("$WHISPER_BIN" -m "$WHISPER_MODEL" -f "$TEMP_AUDIO" \
                 -t "$WHISPER_THREADS" -l "$WHISPER_LANG" \
                 --no-timestamps --output-txt --output-file - 2>/dev/null); then
+        end_time=$(date +%s%N)
+        elapsed_ms=$(( (end_time - start_time) / 1000000 ))
+        
+        # Format elapsed time
+        if [[ $elapsed_ms -ge 10000 ]]; then
+            # Format as seconds with 1 decimal place (e.g., "12.3s")
+            elapsed_sec=$(( elapsed_ms / 100 ))
+            elapsed_display=$(printf "%d.%ds" $((elapsed_sec / 10)) $((elapsed_sec % 10)))
+        else
+            # Format as milliseconds (e.g., "1234ms")
+            elapsed_display="${elapsed_ms}ms"
+        fi
         
         # Clean output - remove whisper metadata and empty lines
         output=$(echo "$output" | grep -v "^whisper_" | grep -v "^system_info" | grep -v "^main:" | sed '/^$/d' | tr '\n' ' ' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
@@ -113,10 +126,10 @@ stop_recording() {
             if [[ "$AUTO_PASTE" == "true" ]]; then
                 sleep 0.1
                 echo -n "$output" | xdotool type --clearmodifiers --file -
-                notify "✅ Inserted text" false "-u normal"
+                notify "✅ Inserted text (${elapsed_display})" false "-u normal"
             else
                 echo -n "$output" | xclip -selection clipboard 2>/dev/null
-                notify "📋 Copied to clipboard" false "-u normal"
+                notify "📋 Copied to clipboard (${elapsed_display})" false "-u normal"
             fi
         else
             notify "❌ No speech detected" true "-u critical"

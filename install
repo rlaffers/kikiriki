@@ -70,7 +70,17 @@ echo
 echo "Setting up xbindkeys configuration..."
 
 XBINDKEYS_CONFIG="${SCRIPT_DIR}/xbindkeys.conf"
-echo "✅ Using local configuration: $XBINDKEYS_CONFIG"
+XBINDKEYS_TEMPLATE="${SCRIPT_DIR}/xbindkeys.conf.template"
+
+# Check if template exists
+if [[ ! -f "$XBINDKEYS_TEMPLATE" ]]; then
+    echo "❌ Error: xbindkeys template not found: $XBINDKEYS_TEMPLATE"
+    exit 1
+fi
+
+# Generate xbindkeys.conf from template
+sed "s|KIKIRIKI_INSTALL_DIR|${SCRIPT_DIR}|g" "$XBINDKEYS_TEMPLATE" > "$XBINDKEYS_CONFIG"
+echo "✅ Generated xbindkeys configuration: $XBINDKEYS_CONFIG"
 
 # Setup systemd user service
 echo

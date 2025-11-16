@@ -1,4 +1,4 @@
-# Speech-to-Text Push-to-Talk
+# Kirikiki - Speech-to-Text Push-to-Talk Service
 
 A simple, efficient push-to-talk speech-to-text solution for Ubuntu Linux using whisper.cpp and xbindkeys.
 
@@ -24,7 +24,8 @@ A simple, efficient push-to-talk speech-to-text solution for Ubuntu Linux using 
 Run the setup script:
 
 ```bash
-cd ~/Projects/kikiriki
+git clone https://github.com/rlaffers/kikiriki.git
+cd kikiriki
 ./install
 ```
 
@@ -59,23 +60,31 @@ Edit `~/Projects/kikiriki/xbindkeys.conf`:
 nano ~/Projects/kikiriki/xbindkeys.conf
 ```
 
-Example configurations:
+The default configuration uses `Ctrl+Space` with the keyhold-handler for debouncing:
 
 ```bash
-# Use Ctrl+Space
-"~/Projects/kikiriki/kikiriki start"
+# Hold Ctrl+Space to record, release to transcribe
+"/home/your_name/.local/kikiriki/keyhold-handler press /home/your_name/.local/kikiriki/kikiriki start"
   Control + space
 
-"~/Projects/kikiriki/kikiriki stop"
-  Control + space + Release
-
-# Use Super (Windows) + V
-"~/Projects/kikiriki/kikiriki start"
-  Mod4 + v
-
-"~/Projects/kikiriki/kikiriki stop"
-  Mod4 + v + Release
+"/home/richard/Projects/kikiriki/keyhold-handler release /home/your_name/.local/kikiriki/kikiriki stop"
+  release+Control + space
 ```
+
+Alternative hotkey examples:
+
+```bash
+# Option 1: Use Ctrl+Alt+G
+"/home/your_name/.local/kikiriki/keyhold-handler press /home/your_name/.local/kikiriki/kikiriki start"
+  Control+Alt + g
+
+"/home/your_name/.local/kikiriki/keyhold-handler release /home/your_name/.local/kikiriki/kikiriki stop"
+  release+Control+Alt + g
+```
+
+**Important Notes:**
+- The `keyhold-handler` wrapper is used to debounce repeated key events from xbindkeys
+- Use full absolute paths in the configuration (replace `/home/your_name/.local/kikiriki/` with your actual installation path)
 
 After editing, restart the service:
 
@@ -111,6 +120,11 @@ ENABLE_SOUNDS=true                                            # Audio feedback
 # Output
 AUTO_PASTE=true                                               # Auto-insert text (vs clipboard)
 ```
+
+**Notification Modes:**
+- By default, the script runs in non-verbose mode and only shows critical error notifications
+- Use the `-v` flag to enable verbose mode and see all notifications including status updates
+- You can disable all notifications by setting `ENABLE_NOTIFICATIONS=false`
 
 ## Usage
 
@@ -162,7 +176,21 @@ You can test the script manually without xbindkeys:
 
 # Stop and transcribe
 ~/Projects/kikiriki/kikiriki stop
+
+# Test with verbose notifications
+~/Projects/kikiriki/kikiriki -v start
+# Speak...
+~/Projects/kikiriki/kikiriki -v stop
+
+# Show help
+~/Projects/kikiriki/kikiriki -h
 ```
+
+**Command line options:**
+- `-v` - Verbose mode (show all notifications including status updates)
+- `-h` - Show help message
+
+**Note:** By default, only critical error notifications are shown. Use `-v` for verbose mode to see all status notifications.
 
 ### Troubleshooting
 

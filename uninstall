@@ -40,6 +40,13 @@ if [[ -d "$STATE_DIR" ]]; then
     echo "✅ Cleaned up state directory"
 fi
 
+# Clean up the keyhold-handler lock fle
+LOCK_FILE="/tmp/kikiriki_key_release.lock"
+if [[ -f "$LOCK_FILE" ]]; then
+    rm -f "$LOCK_FILE"
+    echo "✅ Removed keyhold-handler lock file"
+fi
+
 echo
 echo "=========================================="
 echo "  ✅ Uninstall Complete!"

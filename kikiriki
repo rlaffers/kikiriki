@@ -24,8 +24,8 @@ AUDIO_DEVICE="default"
 # Feedback
 ENABLE_NOTIFICATIONS=true
 ENABLE_SOUNDS=true
-SOUND_START="/usr/share/sounds/freedesktop/stereo/message.oga"
-SOUND_STOP="/usr/share/sounds/freedesktop/stereo/complete.oga"
+SOUND_START="${BASH_SOURCE%/*}/sounds/message.oga"
+SOUND_STOP="${BASH_SOURCE%/*}/sounds/complete.oga"
 
 # Output
 AUTO_PASTE=true

@@ -1,4 +1,4 @@
-# Kirikiki - Speech-to-Text Push-to-Talk Service
+# Kikiriki - Speech-to-Text Push-to-Talk Service
 
 A simple, efficient push-to-talk speech-to-text solution for Ubuntu Linux using whisper.cpp and xbindkeys.
 
@@ -10,6 +10,29 @@ A simple, efficient push-to-talk speech-to-text solution for Ubuntu Linux using 
 ✅ **Auto-Paste** - Transcribed text automatically inserted into any application  
 ✅ **Lightweight** - No Python dependencies, just standard Linux tools  
 ✅ **Privacy-Focused** - All processing happens locally using whisper.cpp  
+
+## Table of Contents
+
+- [Requirements](#requirements)
+- [Quick Start](#quick-start)
+  - [1. Install](#1-install)
+  - [2. Start the service](#2-start-the-service)
+  - [3. Test It!](#3-test-it)
+- [Configuration](#configuration)
+  - [Changing the Keyboard Shortcut](#changing-the-keyboard-shortcut)
+  - [Customizing Whisper Settings](#customizing-whisper-settings)
+- [Usage](#usage)
+  - [Service Management](#service-management)
+  - [Normal Operation](#normal-operation)
+  - [Manual Testing](#manual-testing)
+  - [Troubleshooting](#troubleshooting)
+- [Advanced Usage](#advanced-usage)
+  - [Different Whisper Models](#different-whisper-models)
+  - [Using Different Audio Devices](#using-different-audio-devices)
+  - [Clipboard Mode Instead of Auto-Paste](#clipboard-mode-instead-of-auto-paste)
+- [Uninstall](#uninstall)
+- [Credits](#credits)
+- [License](#license)
 
 ## Requirements
 
@@ -158,11 +181,11 @@ systemctl --user disable kikiriki.service
 ### Normal Operation
 
 1. Ensure the service is running: `systemctl --user status kikiriki.service`
-2. Press and hold your configured hotkey
-3. Speak clearly
-4. Release the hotkey
-5. Wait for transcription (notification will appear)
-6. Text is automatically inserted or copied to clipboard
+2. Press and hold your configured hotkey (`Ctrl+Space` by default)
+3. **Press and hold** `Ctrl+Space`
+4. **Speak** clearly
+5. **Release** the keys
+6. Your text will be inserted where your cursor is!
 
 ### Manual Testing
 
@@ -190,8 +213,6 @@ You can test the script manually without xbindkeys:
 - `-v` - Verbose mode (show all notifications including status updates)
 - `-h` - Show help message
 
-**Note:** By default, only critical error notifications are shown. Use `-v` for verbose mode to see all status notifications.
-
 ### Troubleshooting
 
 **No audio recorded:**
@@ -215,24 +236,6 @@ You can test the script manually without xbindkeys:
 - Check if xdotool is installed: `which xdotool`
 - Try disabling AUTO_PASTE to use clipboard mode instead
 - Some applications may need focus delay (adjust `sleep 0.1` in script)
-
-## File Structure
-
-```
-~/.local/kikiriki/
-├── kikiriki              # Main script (handles recording & transcription)
-├── kikiriki.service      # systemd user service template
-├── install               # Installation & setup script
-├── uninstall             # Uninstallation script
-├── kikiriki-bind-keys    # Start the service (used by systemd)
-├── kikiriki-unbind-keys  # Stop the service (used by systemd)
-├── kikiriki-xbindkeys.conf        # Keyboard shortcuts config (edit this!)
-├── keyhold-handler       # Debouncing script for xbindkeys
-├── README.md             # This file
-
-~/.config/systemd/user/kikiriki.service  # systemd user service
-~/.local/state/kikiriki/                 # Runtime state files
-```
 
 ## Advanced Usage
 
@@ -272,12 +275,6 @@ Run the uninstall script:
 ```bash
 ~/.local/kikiriki/uninstall
 ```
-
-This will:
-- Stop and disable the systemd service
-- Remove the service file
-- Clean up state directories
-- Optionally delete the installation directory
 
 ## Credits
 

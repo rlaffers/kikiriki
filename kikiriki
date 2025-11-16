@@ -9,26 +9,33 @@ set -euo pipefail
 # Verbose mode (controlled by -v flag)
 VERBOSE_MODE=false
 
-# Configuration (edit these values)
+# Default Configuration
+# These values can be overridden in ~/.config/kikiriki/kikiriki.conf
 WHISPER_MODEL="${HOME}/.local/share/whisper.cpp/models/ggml-base.en.bin"
 WHISPER_BIN="${HOME}/.local/share/whisper.cpp/build/bin/whisper-cli"
 WHISPER_THREADS=8
 WHISPER_LANG="en"
+AUDIO_DEVICE="default"
+ENABLE_NOTIFICATIONS=true
+ENABLE_SOUNDS=true
+AUTO_PASTE=true
 
-# Audio settings
+# Load user configuration if it exists
+CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/kikiriki/kikiriki.conf"
+if [[ -f "$CONFIG_FILE" ]]; then
+    source "$CONFIG_FILE"
+fi
+
+# Audio settings (not configurable via config file)
 SAMPLE_RATE=16000
 AUDIO_FORMAT="S16_LE"
 AUDIO_CHANNELS=1
-AUDIO_DEVICE="default"
 
-# Feedback
-ENABLE_NOTIFICATIONS=true
-ENABLE_SOUNDS=true
+# Feedback sounds
 SOUND_START="${BASH_SOURCE%/*}/sounds/message.oga"
 SOUND_STOP="${BASH_SOURCE%/*}/sounds/complete.oga"
 
 # Output
-AUTO_PASTE=true
 TEMP_DIR="/tmp"
 
 # Runtime files

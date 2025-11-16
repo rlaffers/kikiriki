@@ -19,8 +19,8 @@ A simple, efficient push-to-talk speech-to-text solution for Ubuntu Linux using 
   - [2. Start the service](#2-start-the-service)
   - [3. Test It!](#3-test-it)
 - [Configuration](#configuration)
+  - [Main Configuration File](#main-configuration-file)
   - [Changing the Keyboard Shortcut](#changing-the-keyboard-shortcut)
-  - [Customizing Whisper Settings](#customizing-whisper-settings)
 - [Usage](#usage)
   - [Service Management](#service-management)
   - [Normal Operation](#normal-operation)
@@ -54,6 +54,7 @@ cd kikiriki
 
 This will:
 - Install required system dependencies (xbindkeys, xdotool, etc.)
+- Create configuration file at `~/.config/kikiriki/kikiriki.conf`
 - Configure the local xbindkeys config file
 - Set up systemd user service for auto-start on login
 - Make all scripts executable
@@ -75,12 +76,46 @@ Or it will start automatically on next login (if enabled during installation).
 
 ## Configuration
 
-### Changing the Keyboard Shortcut
+### Main Configuration File
 
-Edit `~/.local/share/kikiriki/kikiriki-xbindkeys.conf`:
+Edit `~/.config/kikiriki/kikiriki.conf` to customize your settings:
 
 ```bash
-nano ~/.local/share/kikiriki/kikiriki-xbindkeys.conf
+nano ~/.config/kikiriki/kikiriki.conf
+```
+
+Available settings:
+
+```bash
+# Whisper.cpp Configuration
+WHISPER_MODEL="${HOME}/.local/share/whisper.cpp/models/ggml-base.en.bin"
+WHISPER_BIN="${HOME}/.local/share/whisper.cpp/build/bin/whisper-cli"
+WHISPER_THREADS=8           # CPU threads to use (adjust for your system)
+WHISPER_LANG="en"           # Language code: en, es, fr, de, etc.
+
+# Audio Input
+AUDIO_DEVICE="default"      # ALSA device (use 'arecord -L' to list)
+
+# User Feedback
+ENABLE_NOTIFICATIONS=true   # Show desktop notifications
+ENABLE_SOUNDS=true          # Play sound effects
+
+# Output Behavior
+AUTO_PASTE=true             # Auto-paste (true) or clipboard (false)
+```
+
+**After editing the config file, restart the service:**
+
+```bash
+systemctl --user restart kikiriki.service
+```
+
+### Changing the Keyboard Shortcut
+
+Edit `~/.config/kikiriki/kikiriki-xbindkeys.conf`:
+
+```bash
+nano ~/.config/kikiriki/kikiriki-xbindkeys.conf
 ```
 
 The default configuration uses `Ctrl+Space` with the keyhold-handler for debouncing:
@@ -115,40 +150,6 @@ After editing, restart the service:
 systemctl --user restart kikiriki.service
 ```
 
-### Customizing Whisper Settings
-
-Edit the configuration section in `kikiriki`:
-
-```bash
-nano ~/.local/share/kikiriki/kikiriki
-```
-
-Key settings you can change:
-
-```bash
-# Whisper configuration
-WHISPER_MODEL="${HOME}/.local/share/whisper.cpp/models/ggml-base.en.bin"  # Model path
-WHISPER_BIN="${HOME}/.local/share/whisper.cpp/build/bin/whisper-cli"      # Executable path
-WHISPER_THREADS=8                                             # CPU threads to use
-WHISPER_LANG="en"                                             # Language code
-
-# Audio settings
-SAMPLE_RATE=16000                                             # Audio sample rate
-AUDIO_DEVICE="default"                                        # ALSA device name
-
-# Feedback
-ENABLE_NOTIFICATIONS=true                                     # Desktop notifications
-ENABLE_SOUNDS=true                                            # Audio feedback
-
-# Output
-AUTO_PASTE=true                                               # Auto-insert text (vs clipboard)
-```
-
-**Notification Modes:**
-- By default, the script runs in non-verbose mode and only shows critical error notifications
-- Use the `-v` flag to enable verbose mode and see all notifications including status updates
-- You can disable all notifications by setting `ENABLE_NOTIFICATIONS=false`
-
 ## Usage
 
 ### Service Management
@@ -182,10 +183,9 @@ systemctl --user disable kikiriki.service
 
 1. Ensure the service is running: `systemctl --user status kikiriki.service`
 2. Press and hold your configured hotkey (`Ctrl+Space` by default)
-3. **Press and hold** `Ctrl+Space`
-4. **Speak** clearly
-5. **Release** the keys
-6. Your text will be inserted where your cursor is!
+3. **Speak** clearly
+4. **Release** the keys
+5. Your text will be inserted where your cursor is!
 
 ### Manual Testing
 
@@ -213,28 +213,34 @@ You can test the script manually without xbindkeys:
 - `-v` - Verbose mode (show all notifications including status updates)
 - `-h` - Show help message
 
+**Notification Modes:**
+- By default, the script runs in non-verbose mode and only shows critical error notifications
+- Use the `-v` flag to enable verbose mode and see all notifications including status updates
+- You can disable all notifications by setting `ENABLE_NOTIFICATIONS=false` in the config file
+
 ### Troubleshooting
 
 **No audio recorded:**
 - Check microphone permissions
 - Test with: `arecord -d 5 test.wav && aplay test.wav`
-- Verify AUDIO_DEVICE setting in the script
+- Verify AUDIO_DEVICE setting in `~/.config/kikiriki/kikiriki.conf`
 
 **Transcription fails:**
 - Check whisper.cpp path: `ls ~/.local/share/whisper.cpp/build/bin/whisper-cli`
 - Check model path: `ls ~/.local/share/whisper.cpp/models/ggml-base.en.bin`
+- Verify paths in `~/.config/kikiriki/kikiriki.conf`
 - Run script manually to see error messages
 
 **Hotkey not working:**
 - Verify the service is running: `systemctl --user status kikiriki.service`
-- Check configuration: `cat ~/.local/share/kikiriki/kikiriki-xbindkeys.conf`
+- Check configuration: `cat ~/.config/kikiriki/kikiriki-xbindkeys.conf`
 - Restart the service: `systemctl --user restart kikiriki.service`
 - Check logs: `journalctl --user -u kikiriki.service -n 50`
 - Look for conflicts with desktop environment shortcuts
 
 **Text not pasting:**
 - Check if xdotool is installed: `which xdotool`
-- Try disabling AUTO_PASTE to use clipboard mode instead
+- Try disabling AUTO_PASTE in config to use clipboard mode instead
 - Some applications may need focus delay (adjust `sleep 0.1` in script)
 
 ## Advanced Usage
@@ -252,7 +258,7 @@ cd ~/.local/share/whisper.cpp
 ./models/download-ggml-model.sh large      # Best, slowest
 ```
 
-Then update `WHISPER_MODEL` path in `kikiriki`.
+Then update `WHISPER_MODEL` path in `~/.config/kikiriki/kikiriki.conf`.
 
 ### Using Different Audio Devices
 
@@ -262,11 +268,11 @@ List available audio devices:
 arecord -L
 ```
 
-Update `AUDIO_DEVICE` in the script to match your preferred device.
+Update `AUDIO_DEVICE` in `~/.config/kikiriki/kikiriki.conf` to match your preferred device.
 
 ### Clipboard Mode Instead of Auto-Paste
 
-Set `AUTO_PASTE=false` in the script to copy transcribed text to clipboard instead of auto-pasting.
+Set `AUTO_PASTE=false` in `~/.config/kikiriki/kikiriki.conf` to copy transcribed text to clipboard instead of auto-pasting.
 
 ## Uninstall
 

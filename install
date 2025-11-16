@@ -8,6 +8,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_DIR="${HOME}/.local/share/kikiriki"
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/kikiriki"
 
 echo "=========================================="
 echo "  Kikiriki Speech-to-Text Push-to-Talk Setup"
@@ -59,7 +60,7 @@ WHISPER_CPP_DIR="${HOME}/.local/share/whisper.cpp"
 if [[ ! -f "${WHISPER_CPP_DIR}/build/bin/whisper-cli" ]]; then
     echo "⚠️  Warning: whisper-cli not found at ${WHISPER_CPP_DIR}/build/bin/whisper-cli"
     echo "   Make sure whisper.cpp is built and available"
-    echo "   The script will continue, but you'll need to edit the paths in kikiriki"
+    echo "   The script will continue, but you'll need to edit the paths in the config file"
 fi
 
 if [[ ! -f "${WHISPER_CPP_DIR}/models/ggml-base.en.bin" ]]; then
@@ -115,11 +116,24 @@ chmod +x "${INSTALL_DIR}/keyhold-handler"
 chmod +x "${INSTALL_DIR}/uninstall"
 echo "✅ Scripts are executable"
 
+# Create configuration directory and copy default config
+echo
+echo "Setting up configuration..."
+mkdir -p "$CONFIG_DIR"
+
+if [[ -f "${CONFIG_DIR}/kikiriki.conf" ]]; then
+    echo "⚠️  Configuration file already exists: ${CONFIG_DIR}/kikiriki.conf"
+    echo "   Keeping existing configuration (not overwriting)"
+else
+    cp "${SCRIPT_DIR}/kikiriki.conf" "${CONFIG_DIR}/"
+    echo "✅ Created default configuration: ${CONFIG_DIR}/kikiriki.conf"
+fi
+
 # Setup xbindkeys configuration
 echo
 echo "Generating xbindkeys configuration..."
 
-XBINDKEYS_CONFIG="${INSTALL_DIR}/kikiriki-xbindkeys.conf"
+XBINDKEYS_CONFIG="${CONFIG_DIR}/kikiriki-xbindkeys.conf"
 XBINDKEYS_TEMPLATE="${SCRIPT_DIR}/kikiriki-xbindkeys.conf.template"
 
 # Check if template exists
@@ -129,8 +143,13 @@ if [[ ! -f "$XBINDKEYS_TEMPLATE" ]]; then
 fi
 
 # Generate kikiriki-xbindkeys.conf from template
-sed "s|KIKIRIKI_INSTALL_DIR|${INSTALL_DIR}|g" "$XBINDKEYS_TEMPLATE" > "$XBINDKEYS_CONFIG"
-echo "✅ Generated xbindkeys configuration: $XBINDKEYS_CONFIG"
+if [[ -f "$XBINDKEYS_CONFIG" ]]; then
+    echo "⚠️  xbindkeys config already exists: ${XBINDKEYS_CONFIG}"
+    echo "   Keeping existing configuration (not overwriting)"
+else
+    sed "s|KIKIRIKI_INSTALL_DIR|${INSTALL_DIR}|g" "$XBINDKEYS_TEMPLATE" > "$XBINDKEYS_CONFIG"
+    echo "✅ Generated xbindkeys configuration: $XBINDKEYS_CONFIG"
+fi
 
 # Setup systemd user service
 echo
@@ -175,17 +194,18 @@ echo "  ✅ Setup Complete!"
 echo "=========================================="
 echo
 echo "📁 Installation directory: ${INSTALL_DIR}"
-echo "⚙️  Configuration file: ${INSTALL_DIR}/kikiriki-xbindkeys.conf"
+echo "⚙️  Configuration file: ${CONFIG_DIR}/kikiriki.conf"
+echo "🔧 xbindkeys config: ${CONFIG_DIR}/kikiriki-xbindkeys.conf"
 echo
 echo "🎯 Default hotkey: Ctrl+Space"
 echo "   - Press and hold to record"
 echo "   - Release to transcribe"
 echo
 echo "To customize settings, edit:"
-echo "  ${INSTALL_DIR}/kikiriki"
+echo "  ${CONFIG_DIR}/kikiriki.conf"
 echo
 echo "To change the hotkey, edit:"
-echo "  ${INSTALL_DIR}/kikiriki-xbindkeys.conf"
+echo "  ${CONFIG_DIR}/kikiriki-xbindkeys.conf"
 echo "  Then run: systemctl --user restart kikiriki.service"
 echo
 echo "Service Management:"

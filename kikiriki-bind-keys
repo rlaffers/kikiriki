@@ -4,8 +4,11 @@
 # Uses the local xbindkeys.conf configuration
 #
 
+set -euo pipefail
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_FILE="${SCRIPT_DIR}/xbindkeys.conf"
+PIDFILE="/run/user/${UID}/kikiriki-xbindkeys.pid"
 
 # Check if xbindkeys is already running with our config
 if pgrep -f "xbindkeys.*${CONFIG_FILE}" >/dev/null; then
@@ -19,6 +22,9 @@ if [[ ! -f "$CONFIG_FILE" ]]; then
     exit 1
 fi
 
+# Ensure runtime directory exists
+mkdir -p "/run/user/${UID}"
+
 # Start xbindkeys with our config
 echo "🚀 Starting Kikiriki Speech-to-Text Push-to-Talk..."
 echo "📁 Config: $CONFIG_FILE"
@@ -27,11 +33,20 @@ echo
 
 xbindkeys -f "$CONFIG_FILE"
 
-if pgrep -f "xbindkeys.*${CONFIG_FILE}" >/dev/null; then
-    echo "✅ Started successfully!"
+# Wait for xbindkeys to fork and settle
+sleep 0.5
+
+# Capture the PID of the xbindkeys process
+XBINDKEYS_PID=$(pgrep -f "xbindkeys.*${CONFIG_FILE}" || echo "")
+
+if [[ -n "$XBINDKEYS_PID" ]]; then
+    echo "$XBINDKEYS_PID" > "$PIDFILE"
+    echo "✅ Started successfully! (PID: $XBINDKEYS_PID)"
     echo
     echo "To stop: ${SCRIPT_DIR}/kikiriki-unbind-keys"
+    exit 0
 else
     echo "❌ Failed to start xbindkeys"
+    rm -f "$PIDFILE"
     exit 1
 fi

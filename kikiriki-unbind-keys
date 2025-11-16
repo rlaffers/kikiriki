@@ -3,8 +3,11 @@
 # Stop Speech-to-Text Push-to-Talk
 #
 
+set -euo pipefail
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_FILE="${SCRIPT_DIR}/xbindkeys.conf"
+PIDFILE="/run/user/${UID}/kikiriki-xbindkeys.pid"
 
 # Kill xbindkeys running with our config
 if pgrep -f "xbindkeys.*${CONFIG_FILE}" >/dev/null; then
@@ -14,8 +17,11 @@ else
     echo "ℹ️  Kikiriki Speech-to-Text Push-to-Talk is not running"
 fi
 
+# Clean up PID file
+rm -f "$PIDFILE"
+
 # Clean up any stray recording processes
-STATE_DIR="${HOME}/.local/state/speech-to-text"
+STATE_DIR="${HOME}/.local/state/kikiriki"
 LOCK_FILE="${STATE_DIR}/recording.lock"
 
 if [[ -f "$LOCK_FILE" ]]; then

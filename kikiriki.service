@@ -5,7 +5,8 @@ After=graphical-session.target
 PartOf=graphical-session.target
 
 [Service]
-Type=simple
+Type=forking
+PIDFile=/run/user/%U/kikiriki-xbindkeys.pid
 ExecStart=KIKIRIKI_INSTALL_DIR/kikiriki-bind-keys
 ExecStop=KIKIRIKI_INSTALL_DIR/kikiriki-unbind-keys
 Restart=on-failure

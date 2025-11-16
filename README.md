@@ -127,8 +127,8 @@ Key settings you can change:
 
 ```bash
 # Whisper configuration
-WHISPER_MODEL="${HOME}/whisper.cpp/models/ggml-base.en.bin"  # Model path
-WHISPER_BIN="${HOME}/whisper.cpp/build/bin/whisper-cli"      # Executable path
+WHISPER_MODEL="${HOME}/.local/share/whisper.cpp/models/ggml-base.en.bin"  # Model path
+WHISPER_BIN="${HOME}/.local/share/whisper.cpp/build/bin/whisper-cli"      # Executable path
 WHISPER_THREADS=8                                             # CPU threads to use
 WHISPER_LANG="en"                                             # Language code
 
@@ -221,8 +221,8 @@ You can test the script manually without xbindkeys:
 - Verify AUDIO_DEVICE setting in the script
 
 **Transcription fails:**
-- Check whisper.cpp path: `ls ~/whisper.cpp/build/bin/whisper-cli`
-- Check model path: `ls ~/whisper.cpp/models/ggml-base.en.bin`
+- Check whisper.cpp path: `ls ~/.local/share/whisper.cpp/build/bin/whisper-cli`
+- Check model path: `ls ~/.local/share/whisper.cpp/models/ggml-base.en.bin`
 - Run script manually to see error messages
 
 **Hotkey not working:**
@@ -244,7 +244,7 @@ You can test the script manually without xbindkeys:
 Download different models from whisper.cpp:
 
 ```bash
-cd ~/whisper.cpp
+cd ~/.local/share/whisper.cpp
 ./models/download-ggml-model.sh tiny.en    # Fastest, least accurate
 ./models/download-ggml-model.sh small.en   # Good balance
 ./models/download-ggml-model.sh base.en    # Default

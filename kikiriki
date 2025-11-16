@@ -10,8 +10,8 @@ set -euo pipefail
 VERBOSE_MODE=false
 
 # Configuration (edit these values)
-WHISPER_MODEL="${HOME}/whisper.cpp/models/ggml-base.en.bin"
-WHISPER_BIN="${HOME}/whisper.cpp/build/bin/whisper-cli"
+WHISPER_MODEL="${HOME}/.local/share/whisper.cpp/models/ggml-base.en.bin"
+WHISPER_BIN="${HOME}/.local/share/whisper.cpp/build/bin/whisper-cli"
 WHISPER_THREADS=8
 WHISPER_LANG="en"
 

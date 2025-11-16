@@ -25,14 +25,15 @@ fi
 
 # Check for whisper.cpp installation
 echo "Checking for whisper.cpp..."
-if [[ ! -f "${HOME}/whisper.cpp/build/bin/whisper-cli" ]]; then
-    echo "⚠️  Warning: whisper-cli not found at ${HOME}/whisper.cpp/build/bin/whisper-cli"
+WHISPER_CPP_DIR="${HOME}/.local/share/whisper.cpp"
+if [[ ! -f "${WHISPER_CPP_DIR}/build/bin/whisper-cli" ]]; then
+    echo "⚠️  Warning: whisper-cli not found at ${WHISPER_CPP_DIR}/build/bin/whisper-cli"
     echo "   Make sure whisper.cpp is built and available"
     echo "   The script will continue, but you'll need to edit the paths in kikiriki"
 fi
 
-if [[ ! -f "${HOME}/whisper.cpp/models/ggml-base.en.bin" ]]; then
-    echo "⚠️  Warning: Whisper model not found at ${HOME}/whisper.cpp/models/ggml-base.en.bin"
+if [[ ! -f "${WHISPER_CPP_DIR}/models/ggml-base.en.bin" ]]; then
+    echo "⚠️  Warning: Whisper model not found at ${WHISPER_CPP_DIR}/models/ggml-base.en.bin"
     echo "   You may need to download a model first"
 fi
 
@@ -43,7 +44,6 @@ echo "Installing system dependencies..."
 PACKAGES_TO_INSTALL=()
 for pkg in xbindkeys alsa-utils pulseaudio-utils x11-xserver-utils xdotool xclip libnotify-bin; do
     if ! dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "install ok installed"; then
-      echo "➕ Will install missing package: $pkg"
         PACKAGES_TO_INSTALL+=("$pkg")
     fi
 done

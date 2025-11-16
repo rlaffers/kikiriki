@@ -20,5 +20,7 @@ Bash-based push-to-talk speech-to-text tool for Ubuntu Linux using whisper.cpp a
 - **Exit codes**: 0 for success, 1 for errors
 
 ## Configuration
-- All paths configurable via variables at script top (WHISPER_MODEL, WHISPER_BIN, etc.)
+- Some options configurable via variables at kikiriki.conf (WHISPER_MODEL, WHISPER_BIN, etc.)
+- Less important options can be set at the top of the `kikiriki` script
 - State files in `~/.local/state/kikiriki/`
+- Config files in `~/.config/kikiriki/`

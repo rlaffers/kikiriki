@@ -1,6 +1,6 @@
-# Kikiriki - Speech-to-Text Push-to-Talk Service
+# Kikiriki - Local Speech Transcription Service for Linux
 
-A simple, efficient push-to-talk speech-to-text solution for Ubuntu Linux using whisper.cpp and xbindkeys.
+A simple, efficient push-to-talk speech-to-text solution for 🐧 Ubuntu/Debian Linux 🐧 using whisper.cpp and xbindkeys.
 
 ## Features
 

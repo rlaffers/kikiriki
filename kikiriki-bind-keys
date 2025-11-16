@@ -1,13 +1,13 @@
 #!/bin/bash
 #
 # Start Speech-to-Text Push-to-Talk
-# Uses the local xbindkeys.conf configuration
+# Uses the local kikiriki-xbindkeys.conf configuration
 #
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CONFIG_FILE="${SCRIPT_DIR}/xbindkeys.conf"
+CONFIG_FILE="${SCRIPT_DIR}/kikiriki-xbindkeys.conf"
 PIDFILE="/run/user/${UID}/kikiriki-xbindkeys.pid"
 
 # Check if xbindkeys is already running with our config

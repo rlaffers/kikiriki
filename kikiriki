@@ -34,7 +34,7 @@ TEMP_DIR="/tmp"
 # Runtime files
 STATE_DIR="${HOME}/.local/state/kikiriki"
 LOCK_FILE="${STATE_DIR}/recording.lock"
-TEMP_AUDIO="${TEMP_DIR}/stt-recording-$$.wav"
+TEMP_AUDIO="${TEMP_DIR}/kikiriki-recording-$$.wav"
 
 # Create state directory
 mkdir -p "$STATE_DIR"
@@ -60,7 +60,7 @@ start_recording() {
     fi
     
     # Create temp file with unique name
-    TEMP_AUDIO="${TEMP_DIR}/stt-recording-$RANDOM-$$.wav"
+    TEMP_AUDIO="${TEMP_DIR}/kikiriki-recording-$RANDOM-$$.wav"
     echo "$TEMP_AUDIO" > "$LOCK_FILE"
     
     # Start recording

@@ -5,7 +5,7 @@ A simple, efficient push-to-talk speech-to-text solution for Ubuntu Linux using 
 ## Features
 
 ✅ **Simple Push-to-Talk** - Press and hold a keyboard shortcut to record, release to transcribe  
-✅ **Customizable Hotkeys** - Easy configuration via `xbindkeys.conf`  
+✅ **Customizable Hotkeys** - Easy configuration via `kikiriki-xbindkeys.conf`  
 ✅ **Audio & Visual Feedback** - Sound effects and desktop notifications  
 ✅ **Auto-Paste** - Transcribed text automatically inserted into any application  
 ✅ **Lightweight** - No Python dependencies, just standard Linux tools  
@@ -54,10 +54,10 @@ Or it will start automatically on next login (if enabled during installation).
 
 ### Changing the Keyboard Shortcut
 
-Edit `~/Projects/kikiriki/xbindkeys.conf`:
+Edit `~/.local/kikiriki/kikiriki-xbindkeys.conf`:
 
 ```bash
-nano ~/Projects/kikiriki/xbindkeys.conf
+nano ~/.local/kikiriki/kikiriki-xbindkeys.conf
 ```
 
 The default configuration uses `Ctrl+Space` with the keyhold-handler for debouncing:
@@ -97,7 +97,7 @@ systemctl --user restart kikiriki.service
 Edit the configuration section in `kikiriki`:
 
 ```bash
-nano ~/Projects/kikiriki/kikiriki
+nano ~/.local/kikiriki/kikiriki
 ```
 
 Key settings you can change:
@@ -170,20 +170,20 @@ You can test the script manually without xbindkeys:
 
 ```bash
 # Start recording
-~/Projects/kikiriki/kikiriki start
+~/.local/kikiriki/kikiriki start
 
 # Speak something...
 
 # Stop and transcribe
-~/Projects/kikiriki/kikiriki stop
+~/.local/kikiriki/kikiriki stop
 
 # Test with verbose notifications
-~/Projects/kikiriki/kikiriki -v start
+~/.local/kikiriki/kikiriki -v start
 # Speak...
-~/Projects/kikiriki/kikiriki -v stop
+~/.local/kikiriki/kikiriki -v stop
 
 # Show help
-~/Projects/kikiriki/kikiriki -h
+~/.local/kikiriki/kikiriki -h
 ```
 
 **Command line options:**
@@ -206,7 +206,7 @@ You can test the script manually without xbindkeys:
 
 **Hotkey not working:**
 - Verify the service is running: `systemctl --user status kikiriki.service`
-- Check configuration: `cat ~/Projects/kikiriki/xbindkeys.conf`
+- Check configuration: `cat ~/.local/kikiriki/kikiriki-xbindkeys.conf`
 - Restart the service: `systemctl --user restart kikiriki.service`
 - Check logs: `journalctl --user -u kikiriki.service -n 50`
 - Look for conflicts with desktop environment shortcuts
@@ -219,14 +219,14 @@ You can test the script manually without xbindkeys:
 ## File Structure
 
 ```
-~/Projects/kikiriki/
+~/.local/kikiriki/
 ├── kikiriki              # Main script (handles recording & transcription)
 ├── kikiriki.service      # systemd user service template
 ├── install               # Installation & setup script
 ├── uninstall             # Uninstallation script
 ├── kikiriki-bind-keys    # Start the service (used by systemd)
 ├── kikiriki-unbind-keys  # Stop the service (used by systemd)
-├── xbindkeys.conf        # Keyboard shortcuts config (edit this!)
+├── kikiriki-xbindkeys.conf        # Keyboard shortcuts config (edit this!)
 ├── keyhold-handler       # Debouncing script for xbindkeys
 ├── README.md             # This file
 
@@ -270,7 +270,7 @@ Set `AUTO_PASTE=false` in the script to copy transcribed text to clipboard inste
 Run the uninstall script:
 
 ```bash
-~/Projects/kikiriki/uninstall
+~/.local/kikiriki/uninstall
 ```
 
 This will:

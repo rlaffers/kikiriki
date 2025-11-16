@@ -70,8 +70,8 @@ echo "✅ Scripts are executable"
 echo
 echo "Setting up xbindkeys configuration..."
 
-XBINDKEYS_CONFIG="${SCRIPT_DIR}/xbindkeys.conf"
-XBINDKEYS_TEMPLATE="${SCRIPT_DIR}/xbindkeys.conf.template"
+XBINDKEYS_CONFIG="${SCRIPT_DIR}/kikiriki-xbindkeys.conf"
+XBINDKEYS_TEMPLATE="${SCRIPT_DIR}/kikiriki-xbindkeys.conf.template"
 
 # Check if template exists
 if [[ ! -f "$XBINDKEYS_TEMPLATE" ]]; then
@@ -79,7 +79,7 @@ if [[ ! -f "$XBINDKEYS_TEMPLATE" ]]; then
     exit 1
 fi
 
-# Generate xbindkeys.conf from template
+# Generate kikiriki-xbindkeys.conf from template
 sed "s|KIKIRIKI_INSTALL_DIR|${SCRIPT_DIR}|g" "$XBINDKEYS_TEMPLATE" > "$XBINDKEYS_CONFIG"
 echo "✅ Generated xbindkeys configuration: $XBINDKEYS_CONFIG"
 
@@ -136,7 +136,7 @@ echo "To customize settings, edit:"
 echo "  ${SCRIPT_DIR}/kikiriki"
 echo
 echo "To change the hotkey, edit:"
-echo "  ${SCRIPT_DIR}/xbindkeys.conf"
+echo "  ${SCRIPT_DIR}/kikiriki-xbindkeys.conf"
 echo "  Then run: systemctl --user restart kikiriki.service"
 echo
 echo "Service Management:"

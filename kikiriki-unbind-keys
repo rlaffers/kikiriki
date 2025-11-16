@@ -6,7 +6,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CONFIG_FILE="${SCRIPT_DIR}/xbindkeys.conf"
+CONFIG_FILE="${SCRIPT_DIR}/kikiriki-xbindkeys.conf"
 PIDFILE="/run/user/${UID}/kikiriki-xbindkeys.pid"
 
 # Kill xbindkeys running with our config

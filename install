@@ -7,6 +7,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+INSTALL_DIR="${HOME}/.local/share/kikiriki"
 
 echo "=========================================="
 echo "  Kikiriki Speech-to-Text Push-to-Talk Setup"
@@ -86,20 +87,39 @@ else
     echo "✅ All dependencies already installed"
 fi
 
+# Create installation directory
+echo
+echo "Creating installation directory..."
+mkdir -p "${INSTALL_DIR}/sounds"
+echo "✅ Created: ${INSTALL_DIR}"
+
+# Copy runtime files
+echo
+echo "Copying files to installation directory..."
+cp "${SCRIPT_DIR}/kikiriki" "${INSTALL_DIR}/"
+cp "${SCRIPT_DIR}/kikiriki-bind-keys" "${INSTALL_DIR}/"
+cp "${SCRIPT_DIR}/kikiriki-unbind-keys" "${INSTALL_DIR}/"
+cp "${SCRIPT_DIR}/keyhold-handler" "${INSTALL_DIR}/"
+cp "${SCRIPT_DIR}/uninstall" "${INSTALL_DIR}/"
+cp "${SCRIPT_DIR}/sounds/message.oga" "${INSTALL_DIR}/sounds/"
+cp "${SCRIPT_DIR}/sounds/complete.oga" "${INSTALL_DIR}/sounds/"
+echo "✅ Files copied"
+
 # Make scripts executable
 echo
 echo "Making scripts executable..."
-chmod +x "${SCRIPT_DIR}/kikiriki"
-chmod +x "${SCRIPT_DIR}/kikiriki-bind-keys"
-chmod +x "${SCRIPT_DIR}/kikiriki-unbind-keys"
-chmod +x "${SCRIPT_DIR}/keyhold-handler"
+chmod +x "${INSTALL_DIR}/kikiriki"
+chmod +x "${INSTALL_DIR}/kikiriki-bind-keys"
+chmod +x "${INSTALL_DIR}/kikiriki-unbind-keys"
+chmod +x "${INSTALL_DIR}/keyhold-handler"
+chmod +x "${INSTALL_DIR}/uninstall"
 echo "✅ Scripts are executable"
 
-# Setup xbindkeys configuration (local to this directory)
+# Setup xbindkeys configuration
 echo
-echo "Setting up xbindkeys configuration..."
+echo "Generating xbindkeys configuration..."
 
-XBINDKEYS_CONFIG="${SCRIPT_DIR}/kikiriki-xbindkeys.conf"
+XBINDKEYS_CONFIG="${INSTALL_DIR}/kikiriki-xbindkeys.conf"
 XBINDKEYS_TEMPLATE="${SCRIPT_DIR}/kikiriki-xbindkeys.conf.template"
 
 # Check if template exists
@@ -109,7 +129,7 @@ if [[ ! -f "$XBINDKEYS_TEMPLATE" ]]; then
 fi
 
 # Generate kikiriki-xbindkeys.conf from template
-sed "s|KIKIRIKI_INSTALL_DIR|${SCRIPT_DIR}|g" "$XBINDKEYS_TEMPLATE" > "$XBINDKEYS_CONFIG"
+sed "s|KIKIRIKI_INSTALL_DIR|${INSTALL_DIR}|g" "$XBINDKEYS_TEMPLATE" > "$XBINDKEYS_CONFIG"
 echo "✅ Generated xbindkeys configuration: $XBINDKEYS_CONFIG"
 
 # Setup systemd user service
@@ -129,7 +149,7 @@ if [[ ! -f "$SERVICE_TEMPLATE" ]]; then
 fi
 
 # Copy and customize the service file
-sed "s|KIKIRIKI_INSTALL_DIR|${SCRIPT_DIR}|g" "$SERVICE_TEMPLATE" > "$SERVICE_FILE"
+sed "s|KIKIRIKI_INSTALL_DIR|${INSTALL_DIR}|g" "$SERVICE_TEMPLATE" > "$SERVICE_FILE"
 
 # Reload systemd user daemon
 systemctl --user daemon-reload
@@ -154,18 +174,18 @@ echo "=========================================="
 echo "  ✅ Setup Complete!"
 echo "=========================================="
 echo
-echo "📁 Installation directory: $SCRIPT_DIR"
-echo "⚙️  Configuration file: $XBINDKEYS_CONFIG"
+echo "📁 Installation directory: ${INSTALL_DIR}"
+echo "⚙️  Configuration file: ${INSTALL_DIR}/kikiriki-xbindkeys.conf"
 echo
-echo "🎯 Default hotkey: Ctrl+Alt+G"
+echo "🎯 Default hotkey: Ctrl+Space"
 echo "   - Press and hold to record"
 echo "   - Release to transcribe"
 echo
 echo "To customize settings, edit:"
-echo "  ${SCRIPT_DIR}/kikiriki"
+echo "  ${INSTALL_DIR}/kikiriki"
 echo
 echo "To change the hotkey, edit:"
-echo "  ${SCRIPT_DIR}/kikiriki-xbindkeys.conf"
+echo "  ${INSTALL_DIR}/kikiriki-xbindkeys.conf"
 echo "  Then run: systemctl --user restart kikiriki.service"
 echo
 echo "Service Management:"
@@ -180,10 +200,10 @@ echo "  Enable:  systemctl --user enable kikiriki.service"
 echo "  Disable: systemctl --user disable kikiriki.service"
 echo
 echo "To uninstall:"
-echo "  ${SCRIPT_DIR}/uninstall"
+echo "  ${INSTALL_DIR}/uninstall"
 echo
 echo "To test the script manually:"
-echo "  ${SCRIPT_DIR}/kikiriki start"
+echo "  ${INSTALL_DIR}/kikiriki start"
 echo "  # speak something"
-echo "  ${SCRIPT_DIR}/kikiriki stop"
+echo "  ${INSTALL_DIR}/kikiriki stop"
 echo

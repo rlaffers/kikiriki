@@ -77,20 +77,20 @@ Or it will start automatically on next login (if enabled during installation).
 
 ### Changing the Keyboard Shortcut
 
-Edit `~/.local/kikiriki/kikiriki-xbindkeys.conf`:
+Edit `~/.local/share/kikiriki/kikiriki-xbindkeys.conf`:
 
 ```bash
-nano ~/.local/kikiriki/kikiriki-xbindkeys.conf
+nano ~/.local/share/kikiriki/kikiriki-xbindkeys.conf
 ```
 
 The default configuration uses `Ctrl+Space` with the keyhold-handler for debouncing:
 
 ```bash
 # Hold Ctrl+Space to record, release to transcribe
-"/home/your_name/.local/kikiriki/keyhold-handler press /home/your_name/.local/kikiriki/kikiriki start"
+"/home/your_name/.local/share/kikiriki/keyhold-handler press /home/your_name/.local/share/kikiriki/kikiriki start"
   Control + space
 
-"/home/richard/Projects/kikiriki/keyhold-handler release /home/your_name/.local/kikiriki/kikiriki stop"
+"/home/your_name/.local/share/kikiriki/keyhold-handler release /home/your_name/.local/share/kikiriki/kikiriki stop"
   release+Control + space
 ```
 
@@ -98,16 +98,16 @@ Alternative hotkey examples:
 
 ```bash
 # Option 1: Use Ctrl+Alt+G
-"/home/your_name/.local/kikiriki/keyhold-handler press /home/your_name/.local/kikiriki/kikiriki start"
+"/home/your_name/.local/share/kikiriki/keyhold-handler press /home/your_name/.local/share/kikiriki/kikiriki start"
   Control+Alt + g
 
-"/home/your_name/.local/kikiriki/keyhold-handler release /home/your_name/.local/kikiriki/kikiriki stop"
+"/home/your_name/.local/share/kikiriki/keyhold-handler release /home/your_name/.local/share/kikiriki/kikiriki stop"
   release+Control+Alt + g
 ```
 
 **Important Notes:**
 - The `keyhold-handler` wrapper is used to debounce repeated key events from xbindkeys
-- Use full absolute paths in the configuration (replace `/home/your_name/.local/kikiriki/` with your actual installation path)
+- Use full absolute paths in the configuration (replace `/home/your_name/.local/share/kikiriki/` with your actual installation path)
 
 After editing, restart the service:
 
@@ -120,7 +120,7 @@ systemctl --user restart kikiriki.service
 Edit the configuration section in `kikiriki`:
 
 ```bash
-nano ~/.local/kikiriki/kikiriki
+nano ~/.local/share/kikiriki/kikiriki
 ```
 
 Key settings you can change:
@@ -193,20 +193,20 @@ You can test the script manually without xbindkeys:
 
 ```bash
 # Start recording
-~/.local/kikiriki/kikiriki start
+~/.local/share/kikiriki/kikiriki start
 
 # Speak something...
 
 # Stop and transcribe
-~/.local/kikiriki/kikiriki stop
+~/.local/share/kikiriki/kikiriki stop
 
 # Test with verbose notifications
-~/.local/kikiriki/kikiriki -v start
+~/.local/share/kikiriki/kikiriki -v start
 # Speak...
-~/.local/kikiriki/kikiriki -v stop
+~/.local/share/kikiriki/kikiriki -v stop
 
 # Show help
-~/.local/kikiriki/kikiriki -h
+~/.local/share/kikiriki/kikiriki -h
 ```
 
 **Command line options:**
@@ -227,7 +227,7 @@ You can test the script manually without xbindkeys:
 
 **Hotkey not working:**
 - Verify the service is running: `systemctl --user status kikiriki.service`
-- Check configuration: `cat ~/.local/kikiriki/kikiriki-xbindkeys.conf`
+- Check configuration: `cat ~/.local/share/kikiriki/kikiriki-xbindkeys.conf`
 - Restart the service: `systemctl --user restart kikiriki.service`
 - Check logs: `journalctl --user -u kikiriki.service -n 50`
 - Look for conflicts with desktop environment shortcuts
@@ -273,7 +273,7 @@ Set `AUTO_PASTE=false` in the script to copy transcribed text to clipboard inste
 Run the uninstall script:
 
 ```bash
-~/.local/kikiriki/uninstall
+~/.local/share/kikiriki/uninstall
 ```
 
 ## Credits

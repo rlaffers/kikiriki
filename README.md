@@ -36,7 +36,7 @@ A simple, efficient push-to-talk speech-to-text solution for Ubuntu Linux using 
 
 ## Requirements
 
-- Ubuntu Linux (or Debian-based distribution)
+- Ubuntu Linux (or Debian-based distribution) ***running X server (not Wayland!)***
 - [whisper.cpp](https://github.com/ggml-org/whisper.cpp) installed and built
 - Whisper model downloaded (e.g., `ggml-base.en.bin`)
 

@@ -23,6 +23,35 @@ if ! command -v apt &> /dev/null; then
     fi
 fi
 
+# Check if running on X server
+echo "Checking for X server..."
+if [[ "${XDG_SESSION_TYPE:-}" != "x11" ]]; then
+    if [[ -n "${XDG_SESSION_TYPE:-}" ]]; then
+        echo "❌ Error: Not running on X11 (detected: ${XDG_SESSION_TYPE})"
+    elif [[ -z "${DISPLAY:-}" ]]; then
+        echo "❌ Error: Not running on X server (no X11 session detected)"
+    else
+        echo "⚠️  Warning: Cannot determine session type, but DISPLAY is set"
+        echo "   Kikiriki requires X11 to function properly"
+        read -p "Continue anyway? (y/N) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            exit 1
+        fi
+    fi
+    
+    if [[ "${XDG_SESSION_TYPE:-}" == "wayland" ]]; then
+        echo "   Kikiriki requires X11 and does not support Wayland"
+        exit 1
+    elif [[ -n "${XDG_SESSION_TYPE:-}" && "${XDG_SESSION_TYPE}" != "x11" ]]; then
+        echo "   Kikiriki requires X11 to function properly"
+        exit 1
+    fi
+else
+    echo "✅ X11 session detected"
+fi
+echo
+
 # Check for whisper.cpp installation
 echo "Checking for whisper.cpp..."
 WHISPER_CPP_DIR="${HOME}/.local/share/whisper.cpp"

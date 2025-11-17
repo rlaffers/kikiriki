@@ -70,10 +70,18 @@ start_recording() {
     TEMP_AUDIO="${TEMP_DIR}/kikiriki-recording-$RANDOM-$$.wav"
     echo "$TEMP_AUDIO" > "$LOCK_FILE"
     
+    if [[ "$VERBOSE_MODE" == "true" ]]; then
+      echo "Recording to temporary file: $TEMP_AUDIO"
+    fi
+
     # Start recording
     arecord -f "$AUDIO_FORMAT" -r "$SAMPLE_RATE" -c "$AUDIO_CHANNELS" \
             -D "$AUDIO_DEVICE" "$TEMP_AUDIO" &>/dev/null &
     
+    if [[ "$VERBOSE_MODE" == "true" ]]; then
+      echo "File recording started with PID: $!"
+    fi
+
     # Append PID to lock file
     echo "$!" >> "$LOCK_FILE"
     
@@ -92,6 +100,11 @@ stop_recording() {
     RECORDING_PID=$(tail -n 1 "$LOCK_FILE" 2>/dev/null || echo "")
     rm -f "$LOCK_FILE"
     
+    if [[ "$VERBOSE_MODE" == "true" ]]; then
+      echo "Stopping recording with PID: $RECORDING_PID"
+      echo "Temporary audio file: $TEMP_AUDIO"
+    fi
+
     # Stop recording
     if [[ -n "$RECORDING_PID" ]] && kill -0 "$RECORDING_PID" 2>/dev/null; then
         kill -INT "$RECORDING_PID" 2>/dev/null || true
@@ -99,18 +112,28 @@ stop_recording() {
     fi
     
     play_sound "$SOUND_STOP"
+
+    # re-mux the recording to fix the invalid duration in the WAV header
+    TEMP_AUDIO_FIXED="${TEMP_AUDIO}.fixed.wav"
+    ffmpeg -y -i "$TEMP_AUDIO" -ar "$SAMPLE_RATE" -ac "$AUDIO_CHANNELS" -c:a pcm_s16le "${TEMP_AUDIO_FIXED}" &>/dev/null
+
+    if [[ "$VERBOSE_MODE" == "true" ]]; then
+      echo " Starting transcription..."
+    fi
+
     notify "⚙️ Processing..." false "-u low"
     
     # Check audio file size (needs at least 1KB)
-    if [[ ! -f "$TEMP_AUDIO" ]] || [[ $(stat -c%s "$TEMP_AUDIO" 2>/dev/null || echo 0) -lt 1000 ]]; then
+    if [[ ! -f "$TEMP_AUDIO_FIXED" ]] || [[ $(stat -c%s "$TEMP_AUDIO_FIXED" 2>/dev/null || echo 0) -lt 1000 ]]; then
         notify "❌ Recording too short" true "-u critical"
         rm -f "$TEMP_AUDIO"
+        rm -f "$TEMP_AUDIO_FIXED"
         exit 0
     fi
     
     # Transcribe
     start_time=$(date +%s%N)
-    if output=$("$WHISPER_BIN" -m "$WHISPER_MODEL" -f "$TEMP_AUDIO" \
+    if output=$("$WHISPER_BIN" -m "$WHISPER_MODEL" -f "$TEMP_AUDIO_FIXED" \
                 -t "$WHISPER_THREADS" -l "$WHISPER_LANG" \
                 --no-timestamps --output-txt --output-file - 2>/dev/null); then
         end_time=$(date +%s%N)
@@ -124,6 +147,10 @@ stop_recording() {
         else
             # Format as milliseconds (e.g., "1234ms")
             elapsed_display="${elapsed_ms}ms"
+        fi
+
+        if [[ "$VERBOSE_MODE" == "true" ]]; then
+          echo "Transcription completed in ${elapsed_display}"
         fi
         
         # Clean output - remove whisper metadata and empty lines
@@ -142,11 +169,15 @@ stop_recording() {
             notify "❌ No speech detected" true "-u critical"
         fi
     else
+        if [[ "$VERBOSE_MODE" == "true" ]]; then
+          echo "Transcription failed"
+        fi
         notify "❌ Transcription failed" true "-u critical"
     fi
     
     # Cleanup
     rm -f "$TEMP_AUDIO"
+    rm -f "$TEMP_AUDIO_FIXED"
 }
 
 # Main

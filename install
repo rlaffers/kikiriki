@@ -119,7 +119,7 @@ echo "Installing system dependencies..."
 
 # Check which packages need to be installed
 PACKAGES_TO_INSTALL=()
-for pkg in xbindkeys alsa-utils pulseaudio-utils x11-xserver-utils xdotool xclip libnotify-bin; do
+for pkg in xbindkeys alsa-utils pulseaudio-utils x11-xserver-utils xdotool xclip libnotify-bin ffmpeg; do
     if ! dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "install ok installed"; then
         PACKAGES_TO_INSTALL+=("$pkg")
     fi
